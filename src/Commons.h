@@ -6,12 +6,13 @@
 #define COMPILER_PROJECT_COMMONS_H
 
 #include <iostream>
+#include <fstream>
 #include <string>
 
 using namespace std;
 enum TokenType
 {
-    Num, Id, Keyword, Symbol,
+    Num, Id, Keyword, Symbol, None, Error, Eof, Whitespace, Comment
 };
 
 #endif //COMPILER_PROJECT_COMMONS_H
