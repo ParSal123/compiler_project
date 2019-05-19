@@ -161,6 +161,7 @@ bool Lexer::isStar(char c)
 	return c == '*';
 }
 
+
 bool Lexer::isKeyword(string buffer)
 {
 	return buffer == "if" || buffer == "else" || buffer == "void" || buffer == "int" || buffer == "while"

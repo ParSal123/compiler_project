@@ -10,12 +10,20 @@
 class Token
 {
 private:
+	TokenType type;
+	string value;
 
 public:
 	Token(TokenType type, string value) : type(type), value(value)
 	{}
-	TokenType type;
-	string value;
+	TokenType getType()
+	{
+		return type;
+	}
+	string getValue()
+	{
+		return value;
+	}
 };
 
 
