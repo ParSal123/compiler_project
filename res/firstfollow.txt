@@ -1,0 +1,264 @@
+Program
+eof int void
+∅
+no
+yes
+
+Dec
+int void
+int void eof continue break ; { if while return switch id ( num + - }
+no
+no
+
+FTypeSpec2
+id
+int void eof continue break ; { if while return switch id ( num + - }
+no
+no
+
+Fid4
+( ; [
+int void eof continue break ; { if while return switch id ( num + - }
+no
+no
+
+Fid1
+; [
+int void eof continue break ; { if while return switch id ( num + - }
+no
+no
+
+Params
+int void
+)
+no
+no
+
+Fvoid
+id
+)
+yes
+no
+
+ParamList1
+,
+)
+yes
+no
+
+Param
+int void
+, )
+no
+no
+
+TypeSpec
+int void
+id
+no
+no
+
+FTypeSpec1
+id
+, )
+no
+no
+
+Fid2
+[
+, )
+yes
+no
+
+DecList1
+int void
+eof continue break ; { if while return switch id ( num + - }
+yes
+no
+
+CompundStmt
+{
+case default else int void eof continue break ; { if while return switch id ( num + - }
+no
+no
+
+ExprStmt
+continue break ; id ( num + -
+case default continue break ; { if while return switch id ( num + - else }
+no
+no
+
+SelectStmt
+if
+case default continue break ; { if while return switch id ( num + - else }
+no
+no
+
+IterStmt
+while
+case default continue break ; { if while return switch id ( num + - else }
+no
+no
+
+Stmt
+continue break ; { if while return switch id ( num + -
+case default continue break ; { if while return switch id ( num + - else }
+no
+no
+
+RetStmt
+return
+case default continue break ; { if while return switch id ( num + - else }
+no
+no
+
+Freturn
+; id ( num + -
+case default continue break ; { if while return switch id ( num + - else }
+no
+no
+
+SwitchStmt
+switch
+case default continue break ; { if while return switch id ( num + - else }
+no
+no
+
+CaseStmts1
+case
+default }
+yes
+no
+
+CaseStmt
+case
+case default }
+no
+no
+
+DefaultStmt
+default
+}
+yes
+no
+
+StmtList1
+continue break ; { if while return switch id ( num + -
+case default }
+yes
+no
+
+Fid5
+= [ ( * + - < ==
+; ] ) ,
+yes
+no
+
+F[
+id ( num + -
+; ] ) ,
+no
+no
+
+FExpr
+]
+; ] ) ,
+no
+no
+
+F]
+= * + - < ==
+; ] ) ,
+yes
+no
+
+FAddExpr
+< ==
+; ] ) ,
+yes
+no
+
+Relop
+< ==
++ - ( id num
+no
+no
+
+AddExpr
++ - ( id num
+; ] ) ,
+no
+no
+
+AddExpr1
++ -
+< == ; ] ) ,
+yes
+no
+
+AddOp
++ -
++ - ( id num
+no
+no
+
+Term
++ - ( id num
++ - < == ; ] ) ,
+no
+no
+
+Term1
+*
++ - < == ; ] ) ,
+yes
+no
+
+SignedFactor
++ - ( id num
+* + - < == ; ] ) ,
+no
+no
+
+Factor
+( id num
+* + - < == ; ] ) ,
+no
+no
+
+Fid3
+( [
+* + - < == ; ] ) ,
+yes
+no
+
+Fid
+[
+* + - < == ; ] ) ,
+yes
+no
+
+Args
+id ( num + -
+)
+yes
+no
+
+ArgList
+id ( num + -
+)
+no
+no
+
+Expr
+id ( num + -
+; ] ) ,
+no
+no
+
+ArgList1
+,
+)
+yes
+no
+
