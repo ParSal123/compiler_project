@@ -13,7 +13,7 @@ public:
 	Lexer(string input);
 
 	Token getNextToken();
-	int line = 1;
+	int line = 1,tokenLine = 1;
 private:
 	int currentState = 1;
 	const int startState = 1;

@@ -12,6 +12,7 @@ class Token
 private:
 	TokenType type;
 	string value;
+	int line;
 
 public:
 	Token(TokenType type, string value) : type(type), value(value)
@@ -23,6 +24,14 @@ public:
 	string getValue()
 	{
 		return value;
+	}
+	int getLine()
+	{
+		return line;
+	}
+	void setLine(int l)
+	{
+		line = l;
 	}
 };
 

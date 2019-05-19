@@ -110,6 +110,7 @@ Token Lexer::getNextToken()
 							isKeyword(buffer) ? Keyword : accept[currentState],
 							buffer);
 					reset();
+					ret.setLine(line+1>>1);
 					return ret;
 				}
 			}
