@@ -1,53 +1,53 @@
 Program -> DecList_1 eof .
 
 DecList_1 -> Dec DecList_1 
-            |.
+            | .
 
 Dec -> TypeSpec FTypeSpec_2 .
 
 FTypeSpec_2 -> id Fid_4 .
 
 Fid_4 -> Fid_1 
-        |( Params ) CompundStmt .
+        | ( Params ) CompundStmt .
 
 Fid_1 -> ; 
-        |[ num ] ; .
+        | [ num ] ; .
 
 TypeSpec -> int 
-           |void .
+           | void .
 
 Params -> int FTypeSpec_1 ParamList_1 
-         |void Fvoid .
+         | void Fvoid .
 
 Fvoid -> FTypeSpec_1 ParamList_1 
-        |.
+        | .
 
 ParamList_1 -> , Param ParamList_1 
-              |.
+              | .
 
 Param -> TypeSpec FTypeSpec_1 .
 
 FTypeSpec_1 -> id Fid_2 .
 
 Fid_2 -> 
-        |[ ] .
+        | [ ] .
 
 CompundStmt -> { DecList_1 StmtList_1 } .
 
 StmtList_1 -> Stmt StmtList_1 
-             |.
+             | .
 
 Stmt -> ExprStmt 
-       |CompundStmt 
-       |SelectStmt 
-       |IterStmt 
-       |RetStmt 
-       |SwitchStmt .
+       | CompundStmt 
+       | SelectStmt 
+       | IterStmt 
+       | RetStmt 
+       | SwitchStmt .
 
 ExprStmt -> Expr ; 
-           |continue ; 
-           |break ; 
-           |; .
+           | continue ; 
+           | break ; 
+           | ; .
 
 SelectStmt -> if ( Expr ) Stmt else Stmt .
 
@@ -56,73 +56,73 @@ IterStmt -> while ( Expr ) Stmt .
 RetStmt -> return Freturn .
 
 Freturn -> ; 
-          |Expr ; .
+          | Expr ; .
 
 SwitchStmt -> switch ( Expr ) { CaseStmts_1 DefaultStmt } .
 
 CaseStmts_1 -> CaseStmt CaseStmts_1 
-              |.
+              | .
 
 CaseStmt -> case num : StmtList_1 .
 
 DefaultStmt -> default : StmtList_1 
-              |.
+              | .
 
 Expr -> id Fid_5 
-       |( Expr ) Term_1 AddExpr_1 FAddExpr 
-       |num Term_1 AddExpr_1 FAddExpr 
-       |+ Factor Term_1 AddExpr_1 FAddExpr 
-       |- Factor Term_1 AddExpr_1 FAddExpr .
+       | ( Expr ) Term_1 AddExpr_1 FAddExpr 
+       | num Term_1 AddExpr_1 FAddExpr 
+       | + Factor Term_1 AddExpr_1 FAddExpr 
+       | - Factor Term_1 AddExpr_1 FAddExpr .
 
 Fid_5 -> = Expr 
-        |[ F[ 
-        |Term_1 AddExpr_1 FAddExpr 
-        |( Args ) Term_1 AddExpr_1 FAddExpr .
+        | [ F[ 
+        | Term_1 AddExpr_1 FAddExpr 
+        | ( Args ) Term_1 AddExpr_1 FAddExpr .
 
 F[ -> Expr FExpr .
 
 FExpr -> ] F] .
 
 F] -> = Expr 
-     |Term_1 AddExpr_1 FAddExpr .
+     | Term_1 AddExpr_1 FAddExpr .
 
 Fid -> 
-      |[ Expr ] .
+      | [ Expr ] .
 
 FAddExpr -> Relop AddExpr 
-           |.
+           | .
 
 Relop -> < 
-        |== .
+        | == .
 
 AddExpr -> Term AddExpr_1 .
 
 AddExpr_1 -> AddOp Term AddExpr_1 
-            |.
+            | .
 
 AddOp -> + 
-        |- .
+        | - .
 
 Term -> SignedFactor Term_1 .
 
 Term_1 -> * SignedFactor Term_1 
-         |.
+         | .
 
 SignedFactor -> Factor 
-               |+ Factor 
-               |- Factor .
+               | + Factor 
+               | - Factor .
 
 Factor -> ( Expr ) 
-         |id Fid_3 
-         |num .
+         | id Fid_3 
+         | num .
 
 Fid_3 -> Fid 
-        |( Args ) .
+        | ( Args ) .
 
 Args -> ArgList 
-       |.
+       | .
 
 ArgList -> Expr ArgList_1 .
 
 ArgList_1 -> , Expr ArgList_1 
-            |.
+            | .
