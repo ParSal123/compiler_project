@@ -1,6 +1,5 @@
-#include <bits/stdc++.h>
 #include "Lexer.h"
-
+#include "Parser.h"
 using namespace std;
 string getString(TokenType t)
 {
@@ -9,8 +8,8 @@ string getString(TokenType t)
 }
 int main()
 {
-	string input;
-	ifstream fin(".\\res\\input.txt");
+	/*string input;
+	ifstream fin("./res/input.txt");
 	ofstream fout("scanner.txt");
 	ofstream err("lexical_errors.txt");
 	stringstream buffer;
@@ -30,10 +29,13 @@ int main()
 		{
 			if (token.getType() == 5)
 				err << (line + 1)/2 << ". (" << token.getValue() << ", Invalid input)" << endl;
-			else fout << "(" << getString(token.getType()) << ", " << token.getValue() << ") " ;
+			else fout << "(" <<token.getLine()<< getString(token.getType()) << ", " << token.getValue() << ") " ;
 		}
 
 	}
-	fout<<endl;
+	fout<<endl;*/
+	Parser parser;
+	parser.init();
+	parser.print();
 	return 0;
 }

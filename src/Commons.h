@@ -5,9 +5,7 @@
 #ifndef COMPILER_PROJECT_COMMONS_H
 #define COMPILER_PROJECT_COMMONS_H
 
-#include <iostream>
-#include <fstream>
-#include <string>
+#include <bits/stdc++.h>
 
 using namespace std;
 enum TokenType
