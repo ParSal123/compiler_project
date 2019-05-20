@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/Commons.h
+bits/stdc++.h
+-
+
+../include/Lexer.h
+Token.h
+../include/Token.h
+
+../include/Parser.h
+Token.h
+../include/Token.h
+
+../include/Token.h
+Commons.h
+../include/Commons.h
+
+/home/parsa/Desktop/sharif/97-2/compiler/project/src/Parser.cpp
+Parser.h
+/home/parsa/Desktop/sharif/97-2/compiler/project/src/Parser.h
+
+/home/parsa/Desktop/sharif/97-2/compiler/project/src/main.cpp
+Lexer.h
+/home/parsa/Desktop/sharif/97-2/compiler/project/src/Lexer.h
+Parser.h
+/home/parsa/Desktop/sharif/97-2/compiler/project/src/Parser.h
+

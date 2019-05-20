@@ -1,10 +1,14 @@
 void main(void){
     int a = 0;
     /* comment2 */
+    /* lakjfdsf
+    asdlfkjalkfj
+    asldkfjl.kfj
+    */
     a = 2 + +2;
     a = a + -3;
     cde = a;
-    if (b /* comment1 */ == 3) {
+    if (b /* comment1 */ ==3) {
         a = 3;
         cd!e  = -7;
     }
