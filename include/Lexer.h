@@ -12,13 +12,15 @@ class Lexer
 public:
 
 	Lexer(string input);
-
+	bool isLexingEnded();
 	Token getNextToken();
 	int line = 1,tokenLine = 1;
 private:
 	int currentState = 1;
 	const int startState = 1;
-	int currentIndex = 0;
+	unsigned int currentIndex = 0;
+	bool endOfLexicalAnalysis = false;
+
 	string input, buffer = "";
 	int tokenTypeOfState[13] = {0, 0, NUM_TOKEN_ID, ID_TOKEN_ID, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	bool issymbol(char character);
@@ -42,6 +44,7 @@ private:
 	bool isSlash(char c);
 
 	bool isStar(char c);
+
 };
 
 #endif //COMPILER_PROJECT_LEXER_H

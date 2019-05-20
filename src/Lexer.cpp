@@ -38,7 +38,8 @@ Token Lexer::getNextToken()
 				else if (isEOF(readChar))
 				{
 					reset();
-					return Token(Eof, "");
+					endOfLexicalAnalysis = true;
+					return Token(Eof, "eof");
 				}
 				else halt = true;
 				break;
@@ -191,4 +192,9 @@ bool Lexer::isKeyword(string buffer)
 bool Lexer::isEOF(char c)
 {
 	return c == '\0' || currentIndex >= input.length();
+}
+
+bool Lexer::isLexingEnded()
+{
+	return endOfLexicalAnalysis;
 }

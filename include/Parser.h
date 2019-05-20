@@ -6,8 +6,7 @@
 #define COMPILER_PROJECT_PARSER_H
 
 
-#include "Token.h"
-
+#include "Lexer.h"
 class Parser {
 public:
 
@@ -15,6 +14,7 @@ public:
 	Parser(string inputProgram);
 
 	void print();
+	void parse();
 	static int getTokenId(string s);
 private:
 	string program;
@@ -25,8 +25,15 @@ private:
 	typedef vector <DiagramPath> TransitionDiagram;
 	typedef unordered_map <int, TransitionDiagram> DiagramList;
 	typedef unordered_map<string, int> TokenToIndicesMap;
+	typedef unordered_map<int, bool> TokenIdToBoolMap;
+	typedef unordered_set<int> FirstFollowSet;
+	typedef unordered_map<int, FirstFollowSet> FirstFollowMap;
+	FirstFollowMap first, follow;
+	TokenIdToBoolMap isNonTerminal;
 	static TokenToIndicesMap tokenIndices;
 	DiagramList diagrams;
+	Lexer lexer;
+	void initFirstFollow();
 
 };
 

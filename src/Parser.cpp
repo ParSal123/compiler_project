@@ -3,7 +3,9 @@
 //
 
 #include "Parser.h"
+
 Parser::TokenToIndicesMap Parser::tokenIndices;
+
 void Parser::print()
 {
 	/*for (int i = 0; i < diagrams.size(); i++)
@@ -23,27 +25,34 @@ void Parser::print()
 
 }
 
-Parser::Parser(string inputProgram) : program(inputProgram)
+Parser::Parser(string inputProgram) : program(inputProgram), lexer(inputProgram)
 {
 	ifstream fin("../res/grammar.txt");
-	string input;
 	int numberOfTokensInRule = 0;
-	TransitionDiagram *currentDiagram;
-	DiagramPath *currentPath;
+	TransitionDiagram *currentDiagram = nullptr;
+	DiagramPath *currentPath = nullptr;
 	bool startOfRule = true;
 	tokenIndices.clear();
 	tokenIndices["error"] = ERROR_TOKEN_ID;
 	tokenIndices["eps"] = EPSILON_TOKEN_ID;
 	tokenIndices["num"] = NUM_TOKEN_ID;
 	tokenIndices["id"] = ID_TOKEN_ID;
-
+	isNonTerminal[ERROR_TOKEN_ID] = false;
+	isNonTerminal[EPSILON_TOKEN_ID] = false;
+	isNonTerminal[NUM_TOKEN_ID] = false;
+	isNonTerminal[ID_TOKEN_ID] = false;
+	string input;
 	while (fin >> input)
 	{
+
 		if (startOfRule)
 		{
 			if (tokenIndices.find(input) == tokenIndices.end())
 				tokenIndices[input] = numberOfTokens++;
 			int id = tokenIndices[input];
+			if (isupper(input[0]))
+				isNonTerminal[id] = true;
+			else isNonTerminal[id] = false;
 			diagrams[id] = TransitionDiagram();
 			currentDiagram = &diagrams[id];
 			currentDiagram->push_back(DiagramPath());
@@ -72,14 +81,48 @@ Parser::Parser(string inputProgram) : program(inputProgram)
 			{
 				if (tokenIndices.find(input) == tokenIndices.end())
 					tokenIndices[input] = numberOfTokens++;
-				currentPath->push_back(tokenIndices[input]);
+				int id = tokenIndices[input];
+				if (isupper(input[0]))
+					isNonTerminal[id] = true;
+				else isNonTerminal[id] = false;
+				currentPath->push_back(id);
+				numberOfTokensInRule++;
 			}
 		}
+	}
+	initFirstFollow();
+}
 
+void Parser::initFirstFollow()
+{
+	ifstream fin("../res/firstfollow.txt");
+	string input;
+	while (getline(fin, input))
+	{
+		string firstSet, followSet, nullable, endable, alaki;
+		getline(fin, firstSet);
+		getline(fin, followSet);
+		getline(fin, nullable);
+		getline(fin, endable);
+		getline(fin, alaki);
+		int id = tokenIndices[input];
+		stringstream firstSS(firstSet), followSS(followSet);
+		string in;
+		while (firstSS >> in)
+			first[id].insert(tokenIndices[in]);
+		while (followSS >> in)
+			follow[id].insert(tokenIndices[in]);
+		if (nullable == "yes")
+			first[id].insert(EPSILON_TOKEN_ID);
 	}
 }
 
 int Parser::getTokenId(string s)
 {
 	return tokenIndices[s];
+}
+
+void Parser::parse()
+{
+
 }
