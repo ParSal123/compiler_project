@@ -10,19 +10,19 @@ int void eof continue break ; { if while return switch id ( num + - }
 no
 no
 
-FTypeSpec2
+FTypeSpec_2
 id
 int void eof continue break ; { if while return switch id ( num + - }
 no
 no
 
-Fid4
+Fid_4
 ( ; [
 int void eof continue break ; { if while return switch id ( num + - }
 no
 no
 
-Fid1
+Fid_1
 ; [
 int void eof continue break ; { if while return switch id ( num + - }
 no
@@ -40,7 +40,7 @@ id
 yes
 no
 
-ParamList1
+ParamList_1
 ,
 )
 yes
@@ -58,19 +58,19 @@ id
 no
 no
 
-FTypeSpec1
+FTypeSpec_1
 id
 , )
 no
 no
 
-Fid2
+Fid_2
 [
 , )
 yes
 no
 
-DecList1
+DecList_1
 int void
 eof continue break ; { if while return switch id ( num + - }
 yes
@@ -124,7 +124,7 @@ case default continue break ; { if while return switch id ( num + - else }
 no
 no
 
-CaseStmts1
+CaseStmts_1
 case
 default }
 yes
@@ -142,13 +142,13 @@ default
 yes
 no
 
-StmtList1
+StmtList_1
 continue break ; { if while return switch id ( num + -
 case default }
 yes
 no
 
-Fid5
+Fid_5
 = [ ( * + - < ==
 ; ] ) ,
 yes
@@ -190,7 +190,7 @@ AddExpr
 no
 no
 
-AddExpr1
+AddExpr_1
 + -
 < == ; ] ) ,
 yes
@@ -208,7 +208,7 @@ Term
 no
 no
 
-Term1
+Term_1
 *
 + - < == ; ] ) ,
 yes
@@ -226,7 +226,7 @@ Factor
 no
 no
 
-Fid3
+Fid_3
 ( [
 * + - < == ; ] ) ,
 yes
@@ -256,7 +256,7 @@ id ( num + -
 no
 no
 
-ArgList1
+ArgList_1
 ,
 )
 yes

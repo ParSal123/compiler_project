@@ -17,9 +17,6 @@ public:
 	void parse();
 	static int getTokenId(string s);
 private:
-	string program;
-	int numberOfTokens = 4;
-
 	typedef int TokenId;
 	typedef vector <TokenId> DiagramPath;
 	typedef vector <DiagramPath> TransitionDiagram;
@@ -28,11 +25,16 @@ private:
 	typedef unordered_map<int, bool> TokenIdToBoolMap;
 	typedef unordered_set<int> FirstFollowSet;
 	typedef unordered_map<int, FirstFollowSet> FirstFollowMap;
+	typedef stack<TokenId> TokenStack;
+
+	string program;
+	int numberOfTokens = 4;
 	FirstFollowMap first, follow;
 	TokenIdToBoolMap isNonTerminal;
 	static TokenToIndicesMap tokenIndices;
 	DiagramList diagrams;
 	Lexer lexer;
+
 	void initFirstFollow();
 
 };

@@ -124,5 +124,12 @@ int Parser::getTokenId(string s)
 
 void Parser::parse()
 {
-
+	TokenId currentState = tokenIndices["Program"];
+	Token token = lexer.getNextToken();
+	TokenStack tokenStack;
+	tokenStack.push(currentState);
+	while (!lexer.isLexingEnded() && !tokenStack.empty())
+	{
+		//TODO: to be implemented by Parsa
+	}
 }
