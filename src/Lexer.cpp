@@ -12,8 +12,7 @@ Token Lexer::getNextToken()
 	while (true)
 	{
 		char readChar = input[currentIndex++];
-		if(readChar == '\n')
-			line++;
+
 		bool validChar = true, halt = false;
 		switch (currentState)
 		{
@@ -28,6 +27,8 @@ Token Lexer::getNextToken()
 					currentState = 5;
 				else if (isWhitespace(readChar))
 				{
+					if(readChar == '\n')
+						line++;
 					currentState = 7;
 				}
 				else if (isSlash(readChar))
@@ -79,11 +80,13 @@ Token Lexer::getNextToken()
 				else currentState = 12;
 				break;
 			case 10:
+				if(isEndline(readChar)) line++;
 				if (isStar(readChar))
 					currentState = 11;
 				else currentState = 10;
 				break;
 			case 11:
+				if(isEndline(readChar)) line++;
 				if (isSlash(readChar))
 					currentState = 12;
 				else currentState = 10;
@@ -111,6 +114,7 @@ Token Lexer::getNextToken()
 							buffer);
 					reset();
 					ret.setLine(line+1>>1);
+					if (ret.getType() == 4 || ret.getType() > 6) return getNextToken();
 					return ret;
 				}
 			}
