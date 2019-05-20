@@ -10,19 +10,24 @@
 
 class Parser {
 public:
-	void init();
+
+
+	Parser(string inputProgram);
+
 	void print();
+	static int getTokenId(string s);
 private:
-	int numberOfTokens = 2;
-	const int EPSILON_TOKEN_ID = 1;
+	string program;
+	int numberOfTokens = 4;
+
 	typedef int TokenId;
 	typedef vector <TokenId> DiagramPath;
 	typedef vector <DiagramPath> TransitionDiagram;
-	typedef vector <TransitionDiagram> DiagramList;
-	typedef vector<string> tokenNames;
+	typedef unordered_map <int, TransitionDiagram> DiagramList;
 	typedef unordered_map<string, int> TokenToIndicesMap;
-	TokenToIndicesMap tokenIndices;
+	static TokenToIndicesMap tokenIndices;
 	DiagramList diagrams;
+
 };
 
 

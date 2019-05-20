@@ -10,14 +10,14 @@
 class Token
 {
 private:
-	TokenType type;
+	int type;
 	string value;
 	int line;
 
 public:
-	Token(TokenType type, string value) : type(type), value(value)
+	Token(int type, string value) : type(type), value(value)
 	{}
-	TokenType getType()
+	int getType()
 	{
 		return type;
 	}

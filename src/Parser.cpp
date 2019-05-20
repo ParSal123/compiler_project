@@ -3,28 +3,52 @@
 //
 
 #include "Parser.h"
-
-void Parser::init()
+Parser::TokenToIndicesMap Parser::tokenIndices;
+void Parser::print()
 {
-	ifstream fin("./res/grammar.txt");
+	/*for (int i = 0; i < diagrams.size(); i++)
+	{
+		TransitionDiagram &dfa = diagrams[i];
+		cout <<i <<endl;
+		for(auto path: dfa)
+		{
+			for(int j : path)
+				cout << j << " ";
+			cout<<endl;
+		}
+		cout<<"______________\n"<<endl;
+	}*/
+	for (auto i : tokenIndices)
+		cout << i.second << " " << i.first << endl;
+
+}
+
+Parser::Parser(string inputProgram) : program(inputProgram)
+{
+	ifstream fin("../res/grammar.txt");
 	string input;
 	int numberOfTokensInRule = 0;
 	TransitionDiagram *currentDiagram;
 	DiagramPath *currentPath;
 	bool startOfRule = true;
 	tokenIndices.clear();
+	tokenIndices["error"] = ERROR_TOKEN_ID;
 	tokenIndices["eps"] = EPSILON_TOKEN_ID;
+	tokenIndices["num"] = NUM_TOKEN_ID;
+	tokenIndices["id"] = ID_TOKEN_ID;
+
 	while (fin >> input)
 	{
 		if (startOfRule)
 		{
-			diagrams.push_back(TransitionDiagram());
-			currentDiagram = &diagrams[diagrams.size() - 1];
+			if (tokenIndices.find(input) == tokenIndices.end())
+				tokenIndices[input] = numberOfTokens++;
+			int id = tokenIndices[input];
+			diagrams[id] = TransitionDiagram();
+			currentDiagram = &diagrams[id];
 			currentDiagram->push_back(DiagramPath());
 			currentPath = &((*currentDiagram)[currentDiagram->size() - 1]);
 			startOfRule = false;
-			if (tokenIndices.find(input) == tokenIndices.end())
-				tokenIndices[input] = numberOfTokens++;
 		}
 		else
 		{
@@ -55,21 +79,7 @@ void Parser::init()
 	}
 }
 
-void Parser::print()
+int Parser::getTokenId(string s)
 {
-	/*for (int i = 0; i < diagrams.size(); i++)
-	{
-		TransitionDiagram &dfa = diagrams[i];
-		cout <<i <<endl;
-		for(auto path: dfa)
-		{
-			for(int j : path)
-				cout << j << " ";
-			cout<<endl;
-		}
-		cout<<"______________\n"<<endl;
-	}*/
-	for(auto i : tokenIndices)
-		cout<< i.second<<" "<<i.first<<endl;
-
+	return tokenIndices[s];
 }

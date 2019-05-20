@@ -2,10 +2,12 @@
 // Created by Kiarash on 12/04/2019.
 //
 
+#include "Parser.h"
 #include "Lexer.h"
 
 Lexer::Lexer(string input) : input(input)
 {}
+
 
 Token Lexer::getNextToken()
 {
@@ -27,7 +29,7 @@ Token Lexer::getNextToken()
 					currentState = 5;
 				else if (isWhitespace(readChar))
 				{
-					if(readChar == '\n')
+					if (isEndline(readChar))
 						line++;
 					currentState = 7;
 				}
@@ -37,7 +39,8 @@ Token Lexer::getNextToken()
 				{
 					reset();
 					return Token(Eof, "");
-				} else halt = true;
+				}
+				else halt = true;
 				break;
 			case 2:
 				if (isdigit(readChar))
@@ -75,18 +78,18 @@ Token Lexer::getNextToken()
 				}
 				break;
 			case 9:
-				if(!isEndline(readChar))
+				if (!isEndline(readChar))
 					currentState = 9;
 				else currentState = 12;
 				break;
 			case 10:
-				if(isEndline(readChar)) line++;
+				if (isEndline(readChar)) line++;
 				if (isStar(readChar))
 					currentState = 11;
 				else currentState = 10;
 				break;
 			case 11:
-				if(isEndline(readChar)) line++;
+				if (isEndline(readChar)) line++;
 				if (isSlash(readChar))
 					currentState = 12;
 				else currentState = 10;
@@ -104,23 +107,26 @@ Token Lexer::getNextToken()
 				Token ret = Token(Error, buffer + readChar);
 				reset();
 				return ret;
-			} else
+			}
+			else
 			{
-				if (accept[currentState] != None)
+				if (tokenTypeOfState[currentState] != None)
 				{
 					currentIndex--;
 					Token ret = Token(
-							isKeyword(buffer) ? Keyword : accept[currentState],
+							isKeyword(buffer) || issymbol(buffer) ? Parser::getTokenId(buffer)
+																  : tokenTypeOfState[currentState],
 							buffer);
 					reset();
-					ret.setLine(line+1>>1);
+					ret.setLine(line);
 					if (ret.getType() == 4 || ret.getType() > 6) return getNextToken();
 					return ret;
 				}
 			}
 			currentIndex--;
 			reset();
-		} else buffer += readChar;
+		}
+		else buffer += readChar;
 	}
 }
 
@@ -132,8 +138,16 @@ void Lexer::reset()
 
 bool Lexer::issymbol(char c)
 {
-	return c == ':' || c == ';' || c == ',' || c == '[' || c == ']' || c == '(' || c == ')' || c == '{' || c == '}' || c == '+'
+	return c == ':' || c == ';' || c == ',' || c == '[' || c == ']' || c == '(' || c == ')' || c == '{' || c == '}' ||
+		   c == '+'
 		   || c == '-' || c == '*' || c == '<';
+}
+
+bool Lexer::issymbol(string s)
+{
+	return s == ":" || s == ";" || s == "," || s == "[" || s == "]" || s == "(" || s == ")" || s == "{" || s == "}" ||
+		   s == "+"
+		   || s == "-" || s == "*" || s == "<";
 }
 
 bool Lexer::valid(char c)

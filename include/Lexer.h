@@ -5,6 +5,7 @@
 #define COMPILER_PROJECT_LEXER_H
 
 #include "Token.h"
+#include "Parser.h"
 
 class Lexer
 {
@@ -19,13 +20,14 @@ private:
 	const int startState = 1;
 	int currentIndex = 0;
 	string input, buffer = "";
-	TokenType accept[13] = {None, None, Num, Id, Symbol, Symbol, Symbol, Whitespace, None, None, None, None,
-							Comment};
+	int tokenTypeOfState[13] = {0, 0, NUM_TOKEN_ID, ID_TOKEN_ID, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	bool issymbol(char character);
 
 	bool valid(char c);
 
 	bool isequal(char c);
+
+	bool issymbol(string s);
 
 	void reset();
 
