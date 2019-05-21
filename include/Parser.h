@@ -7,6 +7,12 @@
 
 
 #include "Lexer.h"
+struct ParseState
+{
+	int token, dfaId, index;
+
+	ParseState(int token, int dfaId, int index);
+};
 class Parser {
 public:
 
@@ -25,7 +31,7 @@ private:
 	typedef unordered_map<int, bool> TokenIdToBoolMap;
 	typedef unordered_set<int> FirstFollowSet;
 	typedef unordered_map<int, FirstFollowSet> FirstFollowMap;
-	typedef stack<TokenId> TokenStack;
+	typedef stack<ParseState> TokenStack;
 
 	string program;
 	int numberOfTokens = 4;
@@ -36,6 +42,8 @@ private:
 	Lexer lexer;
 
 	void initFirstFollow();
+	bool isInFirst(int token, int nonTerminal);
+	bool isInFollow(int token, int nonTerminal);
 
 };
 

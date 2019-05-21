@@ -124,12 +124,48 @@ int Parser::getTokenId(string s)
 
 void Parser::parse()
 {
-	TokenId currentState = tokenIndices["Program"];
+	ParseState currentState(tokenIndices["Program"], 0, 0);
 	Token token = lexer.getNextToken();
 	TokenStack tokenStack;
 	tokenStack.push(currentState);
 	while (!lexer.isLexingEnded() && !tokenStack.empty())
 	{
+		currentState = tokenStack.top();
+		if (currentState.dfaId == 0)
+		{
+			for (int i = 0; i < diagrams[currentState.token].size(); i++)
+			{
+				auto &dfa = diagrams[currentState.token][i];
+				if (!isNonTerminal[dfa[0]] && token.getType() == dfa[0]
+					|| isNonTerminal[dfa[0]] && (isInFirst(token.getType(), dfa[0])
+												 || (isInFirst(EPSILON_TOKEN_ID, dfa[0]) &&
+													 isInFollow(token.getType(), dfa[0]))))
+				{
+					tokenStack.pop();
+					tokenStack.push(ParseState(currentState.token, i, 0));
+					break;
+				}
+
+			}
+		}
+		else
+		{
+
+		}
 		//TODO: to be implemented by Parsa
 	}
 }
+
+bool Parser::isInFirst(int token, int nonTerminal)
+{
+	return first[nonTerminal].find(token) == first[nonTerminal].end();
+}
+
+bool Parser::isInFollow(int token, int nonTerminal)
+{
+	return follow[nonTerminal].find(token) == follow[nonTerminal].end();
+}
+
+
+ParseState::ParseState(int token, int dfaId, int index) : token(token), dfaId(dfaId), index(index)
+{}
