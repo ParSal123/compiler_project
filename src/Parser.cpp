@@ -140,31 +140,28 @@ void Parser::parse(int dfa, int level, bool canParseEps)
 	for (auto &path : diagrams[dfa])
 	{
         int firstToken = path[0];
-        if ((!isNonTerminal(firstToken) && firstToken == tokenId)
+		if ((!isNonTerminal(firstToken) && firstToken == tokenId)
+				|| (firstToken == EPSILON_TOKEN_ID && canParseEps)
                 || (isNonTerminal(firstToken) && isInFirst(tokenId, firstToken))
                 || (isNonTerminal(firstToken) && isInFirst(EPSILON_TOKEN_ID, firstToken) && isInFollow(tokenId, firstToken)))
         {
+
             for (TokenId id : path)
             {
-            	if(id == tokenIndices["DecList_1"])
-            		cout << "salam" << endl;
                 if (!isNonTerminal(id))
 				{
-					if (tokenId == id)
+					if (id == tokenId)
 					{
 						printTree(tokenId, level);
 						currentToken = lexer.getNextToken();
 					}
 					else if (id == EPSILON_TOKEN_ID && canParseEps)
-					{
 						printTree(id, level);
-						currentToken = lexer.getNextToken();
-					}
 				}
                 else// TODO: error
                 {
                     printTree(id, level);
-                    parse(id, level + 1, isInFollow(EPSILON_TOKEN_ID, dfa));
+                    parse(id, level + 1, isInFollow(tokenId, dfa));
                 }
 				tokenId = currentToken.getType();
 			}
