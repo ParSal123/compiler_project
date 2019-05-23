@@ -39,7 +39,7 @@ Token Lexer::getNextToken()
 				{
 					reset();
 					endOfLexicalAnalysis = true;
-					return Token(Parser::getTokenId("eof"), "eof");
+					return Token(Parser::getTokenId("eof"), "eof", line);
 				}
 				else halt = true;
 				break;
@@ -105,7 +105,7 @@ Token Lexer::getNextToken()
 		{
 			if (!valid(readChar) || !validChar)
 			{
-				Token ret = Token(ERROR_TOKEN_ID, buffer + readChar);
+				Token ret = Token(ERROR_TOKEN_ID, buffer + readChar, line);
 				reset();
 				return ret;
 			}
@@ -117,9 +117,8 @@ Token Lexer::getNextToken()
 					Token ret = Token(
 							isKeyword(buffer) || issymbol(buffer) ? Parser::getTokenId(buffer)
 																  : tokenTypeOfState[currentState],
-							buffer);
+							buffer, line);
 					reset();
-					ret.setLine(line);
 					if (ret.getType() < 0) return getNextToken();
 					return ret;
 				}
@@ -148,7 +147,7 @@ bool Lexer::issymbol(string s)
 {
 	return s == ":" || s == ";" || s == "," || s == "[" || s == "]" || s == "(" || s == ")" || s == "{" || s == "}" ||
 		   s == "+"
-		   || s == "-" || s == "*" || s == "<";
+		   || s == "-" || s == "*" || s == "<" || s == "=" || s == "==";
 }
 
 bool Lexer::valid(char c)

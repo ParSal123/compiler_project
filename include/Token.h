@@ -15,7 +15,7 @@ private:
 	int line;
 
 public:
-	Token(int type, string value) : type(type), value(value)
+	Token(int type, string value, int line) : type(type), value(value), line(line)
 	{}
 	int getType()
 	{

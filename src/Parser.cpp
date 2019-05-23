@@ -8,21 +8,28 @@ Parser::TokenToIndicesMap Parser::tokenIndices;
 
 void Parser::print()
 {
-	/*for (int i = 0; i < diagrams.size(); i++)
+//	for(auto word: tokenIndices)
+	for (auto &i : diagrams)
 	{
-		TransitionDiagram &dfa = diagrams[i];
-		cout <<i <<endl;
-		for(auto path: dfa)
+		cout << i.first << endl;
+		for (auto &path: i.second)
 		{
-			for(int j : path)
+			for (int j : path)
 				cout << j << " ";
-			cout<<endl;
+			cout << endl;
 		}
 		cout<<"______________\n"<<endl;
-	}*/
+	}
 	for (auto i : tokenIndices)
+	{
 		cout << i.second << " " << i.first << endl;
-
+		/*for (auto j : first[i.second])
+			cout << j <<" ";
+		cout <<endl;
+		for (auto j : follow[i.second])
+			cout << j <<" ";
+		cout <<endl;*/
+	}
 }
 
 Parser::Parser(string inputProgram) : program(inputProgram), lexer(inputProgram)
@@ -128,9 +135,11 @@ void Parser::parse()
 	Token token = lexer.getNextToken();
 	TokenStack tokenStack;
 	tokenStack.push(currentState);
-	while (!lexer.isLexingEnded() && !tokenStack.empty())
+	while (!lexer.isLexingEnded())
 	{
-		currentState = tokenStack.top();
+		cout << token.getLine() <<" "<<token.getType() <<endl;
+		token = lexer.getNextToken();
+		/*currentState = tokenStack.top();
 		if (currentState.dfaId == 0)
 		{
 			for (int i = 0; i < diagrams[currentState.token].size(); i++)
@@ -151,7 +160,7 @@ void Parser::parse()
 		else
 		{
 
-		}
+		}*/
 		//TODO: to be implemented by Parsa
 	}
 }

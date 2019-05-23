@@ -8,7 +8,7 @@ using namespace std;
 int main()
 {
 	string input;
-	ifstream fin("./res/input.txt");
+	ifstream fin("../res/input.txt");
 	ofstream fout("scanner.txt");
 	ofstream err("lexical_errors.txt");
 	stringstream buffer;
@@ -35,5 +35,6 @@ int main()
 //	fout<<endl;
 	Parser parser(input);
 	parser.print();
+	parser.parse();
 	return 0;
 }
