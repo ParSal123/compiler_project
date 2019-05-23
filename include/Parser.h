@@ -45,6 +45,7 @@ private:
 	bool isInFirst(int token, int nonTerminal);
 	bool isInFollow(int token, int nonTerminal);
 
+	void parse(int dfa, int level);
 };
 
 

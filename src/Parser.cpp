@@ -129,6 +129,16 @@ int Parser::getTokenId(string s)
 	return tokenIndices[s];
 }
 
+void Parser::parse(int dfa, int level)
+{
+	Token token = lexer.getNextToken();
+	int tokenId = token.getType();
+	for (auto &path : diagrams[dfa])
+	{
+
+	}
+}
+
 void Parser::parse()
 {
 	ParseState currentState(tokenIndices["Program"], 0, 0);
@@ -139,7 +149,7 @@ void Parser::parse()
 	{
 		cout << token.getLine() <<" "<<token.getType() <<endl;
 		token = lexer.getNextToken();
-		/*currentState = tokenStack.top();
+		currentState = tokenStack.top();
 		if (currentState.dfaId == 0)
 		{
 			for (int i = 0; i < diagrams[currentState.token].size(); i++)
@@ -160,7 +170,7 @@ void Parser::parse()
 		else
 		{
 
-		}*/
+		}
 		//TODO: to be implemented by Parsa
 	}
 }
