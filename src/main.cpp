@@ -8,7 +8,7 @@ int main()
 {
 	string input;
 	ifstream fin("../res/input.txt");
-	ofstream fout("scanner.txt");
+	ofstream fout("scanner.txt ");
 	ofstream err("lexical_errors.txt");
 	stringstream buffer;
 	buffer << fin.rdbuf();

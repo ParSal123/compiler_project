@@ -8,12 +8,6 @@
 
 #include "Lexer.h"
 
-struct ParseState
-{
-	int token, dfaId, index;
-
-	ParseState(int token, int dfaId, int index);
-};
 class Parser {
 public:
 
@@ -27,27 +21,30 @@ private:
 	typedef int TokenId;
 	typedef vector <TokenId> DiagramPath;
 	typedef vector <DiagramPath> TransitionDiagram;
-	typedef unordered_map <int, TransitionDiagram> DiagramList;
-	typedef unordered_map<string, int> TokenToIndicesMap;
-	typedef unordered_map<int, bool> TokenIdToBoolMap;
-	typedef unordered_set<int> FirstFollowSet;
-	typedef unordered_map<int, FirstFollowSet> FirstFollowMap;
-	typedef stack<ParseState> TokenStack;
+	typedef unordered_map <TokenId, TransitionDiagram> DiagramList;
+	typedef unordered_map<string, TokenId> TokenToIndicesMap;
+	typedef unordered_map<TokenId, string> IndicesToTokenMap;
+	typedef unordered_set<TokenId> NonTerminalSet;
+	typedef unordered_set<TokenId> FirstFollowSet;
+	typedef unordered_map<TokenId, FirstFollowSet> FirstFollowMap;
 
 	string program;
 	int numberOfTokens = 4;
 	FirstFollowMap first, follow;
-	TokenIdToBoolMap isNonTerminal;
+	NonTerminalSet nonTerminal;
 	static TokenToIndicesMap tokenIndices;
+	static IndicesToTokenMap tokenNames;
     ofstream parseTree;
 	DiagramList diagrams;
 	Lexer lexer;
+	Token currentToken;
 
 	void initFirstFollow();
 	bool isInFirst(int token, int nonTerminal);
 	bool isInFollow(int token, int nonTerminal);
+	bool isNonTerminal(TokenId token);
 
-	void parse(int dfa, int level);
+	void parse(int dfa, int level, bool canParseEps);
     void printTree(TokenId id, int level);
 };
 
