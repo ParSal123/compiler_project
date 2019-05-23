@@ -1,5 +1,4 @@
 #include "Parser.h"
-using namespace std;
 /*string getString(TokenType t)
 {
 	string ar[] = {"Number", "Id", "Keyword", "Symbol", "Invalid input", "EOF", "Whitespace"};

@@ -7,6 +7,7 @@
 
 
 #include "Lexer.h"
+
 struct ParseState
 {
 	int token, dfaId, index;
@@ -38,6 +39,7 @@ private:
 	FirstFollowMap first, follow;
 	TokenIdToBoolMap isNonTerminal;
 	static TokenToIndicesMap tokenIndices;
+    ofstream parseTree;
 	DiagramList diagrams;
 	Lexer lexer;
 
@@ -46,6 +48,7 @@ private:
 	bool isInFollow(int token, int nonTerminal);
 
 	void parse(int dfa, int level);
+    void printTree(TokenId id, int level);
 };
 
 

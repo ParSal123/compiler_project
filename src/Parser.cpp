@@ -34,6 +34,7 @@ void Parser::print()
 
 Parser::Parser(string inputProgram) : program(inputProgram), lexer(inputProgram)
 {
+    parseTree.open("../parseTree.txt");
 	ifstream fin("../res/grammar.txt");
 	int numberOfTokensInRule = 0;
 	TransitionDiagram *currentDiagram = nullptr;
@@ -135,44 +136,36 @@ void Parser::parse(int dfa, int level)
 	int tokenId = token.getType();
 	for (auto &path : diagrams[dfa])
 	{
+        int cur_token = path[0];
+        if ((!isNonTerminal[cur_token] && cur_token == tokenId)
+                || (isNonTerminal[cur_token] && isInFirst(tokenId, cur_token))
+                || (isNonTerminal[cur_token] && isInFirst(EPSILON_TOKEN_ID, cur_token) && isInFollow(tokenId, cur_token)))
+        {
+            for (TokenId id : path)
+            {
+                if (tokenId == id)
+                {
+                    printTree(tokenId, level);
+                }
+                else if (isNonTerminal[id]) // TODO: error
+                {
+                    printTree(tokenId, level);
+                    parse(tokenId, level + 1);
+                }
+                token = lexer.getNextToken();
+                tokenId = token.getType();
+            }
+            return;
+        }
 
 	}
 }
 
-void Parser::parse()
+void Parser::printTree(TokenId id, int level)
 {
-	ParseState currentState(tokenIndices["Program"], 0, 0);
-	Token token = lexer.getNextToken();
-	TokenStack tokenStack;
-	tokenStack.push(currentState);
-	while (!lexer.isLexingEnded())
-	{
-		cout << token.getLine() <<" "<<token.getType() <<endl;
-		token = lexer.getNextToken();
-		currentState = tokenStack.top();
-		if (currentState.dfaId == 0)
-		{
-			for (int i = 0; i < diagrams[currentState.token].size(); i++)
-			{
-				auto &dfa = diagrams[currentState.token][i];
-				if (!isNonTerminal[dfa[0]] && token.getType() == dfa[0]
-					|| isNonTerminal[dfa[0]] && (isInFirst(token.getType(), dfa[0])
-												 || (isInFirst(EPSILON_TOKEN_ID, dfa[0]) &&
-													 isInFollow(token.getType(), dfa[0]))))
-				{
-					tokenStack.pop();
-					tokenStack.push(ParseState(currentState.token, i, 0));
-					break;
-				}
-
-			}
-		}
-		else
-		{
-
-		}
-		//TODO: to be implemented by Parsa
-	}
+    while (level--)
+        Parser::parseTree << "|\t";
+    Parser::parseTree << id << endl;
 }
 
 bool Parser::isInFirst(int token, int nonTerminal)
