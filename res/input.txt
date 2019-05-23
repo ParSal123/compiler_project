@@ -1,5 +1,5 @@
 void main(void){
-    int a = 0;
+    int a;
     /* comm
     ababa
     fhf hjof
@@ -12,13 +12,12 @@ void main(void){
     cde = a;
     if (b /* comment1 */ == 3) {
         a = 3;
-        cd!e  = -7;
+        cde  = -7;
     }
     else
     {
         b = a < cde;
-        {cde = @2;
+        {cde = 2;
     }}
-    abbas
     return;
 }

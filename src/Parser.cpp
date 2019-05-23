@@ -5,28 +5,35 @@
 #include "Parser.h"
 
 Parser::TokenToIndicesMap Parser::tokenIndices;
-
+Parser::IndicesToTokenMap Parser::tokenNames;
 void Parser::print()
 {
-	/*for (int i = 0; i < diagrams.size(); i++)
+//	for(auto word: tokenIndices)
+	for (auto &i : diagrams)
 	{
-		TransitionDiagram &dfa = diagrams[i];
-		cout <<i <<endl;
-		for(auto path: dfa)
+		cout << i.first <<" "<<tokenNames[i.first] << endl;
+		for (auto &path: i.second)
 		{
-			for(int j : path)
-				cout << j << " ";
-			cout<<endl;
+			for (int j : path)
+				cout << tokenNames[j] << " ";
+			cout << endl;
 		}
+		cout<<"First: "<<endl;
+		for (auto j : first[i.first])
+			cout << tokenNames[j] <<" ";
+		cout <<endl << "Follow: " << endl;
+		for (auto j : follow[i.first])
+			cout << tokenNames[j] <<" ";
+		cout <<endl;
 		cout<<"______________\n"<<endl;
-	}*/
-	for (auto i : tokenIndices)
-		cout << i.second << " " << i.first << endl;
-
+	}
+	for(auto &i : tokenIndices)
+		cout << i.second << " "<<i.first<<endl;
 }
 
 Parser::Parser(string inputProgram) : program(inputProgram), lexer(inputProgram)
 {
+    parseTree.open("../parseTree.txt");
 	ifstream fin("../res/grammar.txt");
 	int numberOfTokensInRule = 0;
 	TransitionDiagram *currentDiagram = nullptr;
@@ -37,10 +44,10 @@ Parser::Parser(string inputProgram) : program(inputProgram), lexer(inputProgram)
 	tokenIndices["eps"] = EPSILON_TOKEN_ID;
 	tokenIndices["num"] = NUM_TOKEN_ID;
 	tokenIndices["id"] = ID_TOKEN_ID;
-	isNonTerminal[ERROR_TOKEN_ID] = false;
-	isNonTerminal[EPSILON_TOKEN_ID] = false;
-	isNonTerminal[NUM_TOKEN_ID] = false;
-	isNonTerminal[ID_TOKEN_ID] = false;
+//	isNonTerminal[ERROR_TOKEN_ID] = false;
+//	isNonTerminal[EPSILON_TOKEN_ID] = false;
+//	isNonTerminal[NUM_TOKEN_ID] = false;
+//	isNonTerminal[ID_TOKEN_ID] = false;
 	string input;
 	while (fin >> input)
 	{
@@ -51,8 +58,7 @@ Parser::Parser(string inputProgram) : program(inputProgram), lexer(inputProgram)
 				tokenIndices[input] = numberOfTokens++;
 			int id = tokenIndices[input];
 			if (isupper(input[0]))
-				isNonTerminal[id] = true;
-			else isNonTerminal[id] = false;
+				nonTerminal.insert(id);
 			diagrams[id] = TransitionDiagram();
 			currentDiagram = &diagrams[id];
 			currentDiagram->push_back(DiagramPath());
@@ -83,14 +89,19 @@ Parser::Parser(string inputProgram) : program(inputProgram), lexer(inputProgram)
 					tokenIndices[input] = numberOfTokens++;
 				int id = tokenIndices[input];
 				if (isupper(input[0]))
-					isNonTerminal[id] = true;
-				else isNonTerminal[id] = false;
+					nonTerminal.insert(id);
 				currentPath->push_back(id);
 				numberOfTokensInRule++;
 			}
 		}
 	}
+	for (auto &token : tokenIndices)
+	{
+		tokenNames[token.second] = token.first;
+	}
 	initFirstFollow();
+	currentToken = lexer.getNextToken();
+
 }
 
 void Parser::initFirstFollow()
@@ -122,14 +133,72 @@ int Parser::getTokenId(string s)
 	return tokenIndices[s];
 }
 
+void Parser::parse(int dfa, int level, bool canParseEps)
+{
+//	Token token = lexer.getNextToken();
+	int tokenId = currentToken.getType();
+	for (auto &path : diagrams[dfa])
+	{
+        int firstToken = path[0];
+        if ((!isNonTerminal(firstToken) && firstToken == tokenId)
+                || (isNonTerminal(firstToken) && isInFirst(tokenId, firstToken))
+                || (isNonTerminal(firstToken) && isInFirst(EPSILON_TOKEN_ID, firstToken) && isInFollow(tokenId, firstToken)))
+        {
+            for (TokenId id : path)
+            {
+            	if(id == tokenIndices["DecList_1"])
+            		cout << "salam" << endl;
+                if (!isNonTerminal(id))
+				{
+					if (tokenId == id)
+					{
+						printTree(tokenId, level);
+						currentToken = lexer.getNextToken();
+					}
+					else if (id == EPSILON_TOKEN_ID && canParseEps)
+					{
+						printTree(id, level);
+						currentToken = lexer.getNextToken();
+					}
+				}
+                else// TODO: error
+                {
+                    printTree(id, level);
+                    parse(id, level + 1, isInFollow(EPSILON_TOKEN_ID, dfa));
+                }
+				tokenId = currentToken.getType();
+			}
+            return;
+        }
+
+	}
+}
+
+void Parser::printTree(TokenId id, int level)
+{
+    while (level--)
+        Parser::parseTree << "|\t";
+    Parser::parseTree << tokenNames[id] << endl;
+}
+
+bool Parser::isInFirst(int token, int nonTerminal)
+{
+	return first[nonTerminal].find(token) != first[nonTerminal].end();
+}
+
+bool Parser::isInFollow(int token, int nonTerminal)
+{
+	return follow[nonTerminal].find(token) != follow[nonTerminal].end();
+}
+
+bool Parser::isNonTerminal(int token)
+{
+	return nonTerminal.find(token) != nonTerminal.end();
+}
+
 void Parser::parse()
 {
-	TokenId currentState = tokenIndices["Program"];
-	Token token = lexer.getNextToken();
-	TokenStack tokenStack;
-	tokenStack.push(currentState);
-	while (!lexer.isLexingEnded() && !tokenStack.empty())
-	{
-		//TODO: to be implemented by Parsa
-	}
+	parseTree << "Program" <<endl;
+
+	parse(getTokenId("Program"), 1, false);
 }

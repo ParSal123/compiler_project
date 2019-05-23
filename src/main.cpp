@@ -1,5 +1,4 @@
 #include "Parser.h"
-using namespace std;
 /*string getString(TokenType t)
 {
 	string ar[] = {"Number", "Id", "Keyword", "Symbol", "Invalid input", "EOF", "Whitespace"};
@@ -8,8 +7,8 @@ using namespace std;
 int main()
 {
 	string input;
-	ifstream fin("./res/input.txt");
-	ofstream fout("scanner.txt");
+	ifstream fin("../res/input.txt");
+	ofstream fout("scanner.txt ");
 	ofstream err("lexical_errors.txt");
 	stringstream buffer;
 	buffer << fin.rdbuf();
@@ -35,5 +34,6 @@ int main()
 //	fout<<endl;
 	Parser parser(input);
 	parser.print();
+	parser.parse();
 	return 0;
 }

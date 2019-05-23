@@ -13,22 +13,28 @@ bits/stdc++.h
 ../include/Lexer.h
 Token.h
 ../include/Token.h
+Parser.h
+../include/Parser.h
 
 ../include/Parser.h
-Token.h
-../include/Token.h
+Lexer.h
+../include/Lexer.h
 
 ../include/Token.h
 Commons.h
 ../include/Commons.h
+
+/home/parsa/Desktop/sharif/97-2/compiler/project/src/Lexer.cpp
+Parser.h
+/home/parsa/Desktop/sharif/97-2/compiler/project/src/Parser.h
+Lexer.h
+/home/parsa/Desktop/sharif/97-2/compiler/project/src/Lexer.h
 
 /home/parsa/Desktop/sharif/97-2/compiler/project/src/Parser.cpp
 Parser.h
 /home/parsa/Desktop/sharif/97-2/compiler/project/src/Parser.h
 
 /home/parsa/Desktop/sharif/97-2/compiler/project/src/main.cpp
-Lexer.h
-/home/parsa/Desktop/sharif/97-2/compiler/project/src/Lexer.h
 Parser.h
 /home/parsa/Desktop/sharif/97-2/compiler/project/src/Parser.h
 

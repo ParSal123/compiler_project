@@ -22,7 +22,8 @@ private:
 	bool endOfLexicalAnalysis = false;
 
 	string input, buffer = "";
-	int tokenTypeOfState[13] = {0, 0, NUM_TOKEN_ID, ID_TOKEN_ID, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	int tokenTypeOfState[13] = {-1, -1, NUM_TOKEN_ID, ID_TOKEN_ID, 0, 0, 0, -2, -1, -1, -1, -1,
+							-3};
 	bool issymbol(char character);
 
 	bool valid(char c);

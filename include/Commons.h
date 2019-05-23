@@ -8,10 +8,10 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-enum TokenType
+/*enum TokenType
 {
     Num, Id, Keyword, Symbol, None, Error, Eof, Whitespace, Comment
-};
+};*/
 constexpr int ERROR_TOKEN_ID = 0;
 constexpr int EPSILON_TOKEN_ID = 1;
 constexpr int NUM_TOKEN_ID = 2;
