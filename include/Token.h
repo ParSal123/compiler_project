@@ -10,13 +10,13 @@
 class Token
 {
 private:
+	int line;
 	int type;
 	string value;
-	int line;
 
 public:
 	Token() = default;
-	Token(int type, string value, int line) : type(type), value(value), line(line)
+	Token(int type, string value, int line) : line(line), type(type), value(value)
 	{}
 	int getType()
 	{
@@ -29,10 +29,6 @@ public:
 	int getLine()
 	{
 		return line;
-	}
-	void setLine(int l)
-	{
-		line = l;
 	}
 };
 

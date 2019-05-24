@@ -9,7 +9,6 @@ Parser::IndicesToTokenMap Parser::tokenNames;
 
 void Parser::print()
 {
-//	for(auto word: tokenIndices)
 	for (auto &i : diagrams)
 	{
 		cout << i.first << " " << tokenNames[i.first] << endl;
@@ -46,10 +45,6 @@ Parser::Parser(string inputProgram) : program(inputProgram), lexer(inputProgram)
 	tokenIndices["eps"] = EPSILON_TOKEN_ID;
 	tokenIndices["num"] = NUM_TOKEN_ID;
 	tokenIndices["id"] = ID_TOKEN_ID;
-//	isNonTerminal[ERROR_TOKEN_ID] = false;
-//	isNonTerminal[EPSILON_TOKEN_ID] = false;
-//	isNonTerminal[NUM_TOKEN_ID] = false;
-//	isNonTerminal[ID_TOKEN_ID] = false;
 	string input;
 	while (fin >> input)
 	{
@@ -137,7 +132,6 @@ int Parser::getTokenId(string s)
 
 void Parser::parse(int dfa, int level, bool canParseEps)
 {
-//	Token token = lexer.getNextToken();
 	int tokenId = currentToken.getType();
 	for (auto &path : diagrams[dfa])
 	{
@@ -146,10 +140,8 @@ void Parser::parse(int dfa, int level, bool canParseEps)
 		if ((!isNonTerminal(firstToken) && firstToken == tokenId)
 			|| (firstToken == EPSILON_TOKEN_ID && canParseEps)
 			|| (isNonTerminal(firstToken) && isInFirst(tokenId, firstToken))
-			||
-			(isNonTerminal(firstToken) && isInFirst(EPSILON_TOKEN_ID, firstToken) && isInFollow(tokenId, firstToken)))
+			|| (isNonTerminal(firstToken) && isInFirst(EPSILON_TOKEN_ID, firstToken) && isInFollow(tokenId, firstToken)))
 		{
-
 			for (TokenId id : path)
 			{
 				if (!isNonTerminal(id))
@@ -162,21 +154,19 @@ void Parser::parse(int dfa, int level, bool canParseEps)
 					else if (id == EPSILON_TOKEN_ID && canParseEps)
 						printTree(id, level);
 					else if (id == tokenIndices["eof"])
-					{
 						throw malformedInput();
-						return;
+					else
+					{
+						missingTerminal(id);
+						printTree(id, level, true);
 					}
-					else missingTerminal(id);
 				}
 				else
 				{
 					while (!isInFirst(tokenId, id) && !isInFollow(tokenId, id))
 					{
 						if (tokenId == tokenIndices["eof"])
-						{
 							throw unexpectedEndOfFile();
-							return;
-						}
 						unexpectedTerminal();
 						currentToken = getNextToken();
 						tokenId = currentToken.getType();
@@ -193,7 +183,6 @@ void Parser::parse(int dfa, int level, bool canParseEps)
 			}
 			return;
 		}
-
 	}
 }
 
@@ -214,11 +203,13 @@ void Parser::lexingError(Token token)
 	errors << token.getLine() << ". Lexing Error! \"" << token.getValue() <<"\"" << endl;
 }
 
-void Parser::printTree(TokenId id, int level)
+void Parser::printTree(TokenId id, int level, bool missed)
 {
 	while (level--)
 		Parser::parseTree << "|\t";
-	Parser::parseTree << tokenNames[id] << endl;
+	Parser::parseTree << tokenNames[id];
+	if (missed) parseTree << " (missed)";
+	parseTree << endl;
 }
 
 bool Parser::isInFirst(int token, int nonTerminal)
