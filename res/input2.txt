@@ -1,7 +1,7 @@
 int b;
 int foo(int d, int e){
     int f;
-    void foo2(int k[2]) {
+    void foo2(int k[]) {
         return k[0] + k[1];
     }
     int fff[2];
@@ -9,10 +9,12 @@ int foo(int d, int e){
     fff[1] = d + 1;
     f = foo2(fff);
     b = e + f;
-    while (d > 0) {
+    while (d < 0) {
         f = f + d;
         d = d - 1;
         if (d == 4)
+            break;
+        else
             break;
     }
     // comment1
@@ -30,12 +32,12 @@ void main(void){
     }
     else
     {   switch (arr[2]) {
-                2:
+                case 2:
                             b = b + 1;
-3:
+case 3:
                             b = b + 2;
                             return;
-4:
+case 4:
                             {   u = 5;
                                 b = u * -123;
                                 break;}

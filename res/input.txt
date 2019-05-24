@@ -1,7 +1,12 @@
 void main(void){
     int a;
-    /* comment
-    comment */
+    /* comm
+    ababa
+    fhf hjof
+    f huf
+    f'bhdf
+    hjent2
+     dd*/
     a = 2 + +2;
     a = a + -3;
     cde = a;

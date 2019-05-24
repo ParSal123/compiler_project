@@ -5,13 +5,10 @@
 #ifndef COMPILER_PROJECT_PARSER_H
 #define COMPILER_PROJECT_PARSER_H
 
-
 #include "Lexer.h"
 
 class Parser {
 public:
-
-
 	Parser(string inputProgram);
 
 	void print();
@@ -45,7 +42,7 @@ private:
 	bool isNonTerminal(TokenId token);
 
 	void parse(int dfa, int level, bool canParseEps);
-    void printTree(TokenId id, int level);
+    void printTree(TokenId id, int level, bool missed = false);
 
 	Token getNextToken();
 
@@ -57,10 +54,9 @@ private:
 
 	void missingNonTerminal(TokenId nonTerminal);
 
-	void unexpectedEndOfFile();
+	string unexpectedEndOfFile();
 
-	void malformedInput();
+	string malformedInput();
 };
-
 
 #endif //COMPILER_PROJECT_PARSER_H

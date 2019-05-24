@@ -14,7 +14,6 @@ Token Lexer::getNextToken()
 	while (true)
 	{
 		char readChar = input[currentIndex++];
-
 		bool validChar = true, halt = false;
 		switch (currentState)
 		{
@@ -23,9 +22,9 @@ Token Lexer::getNextToken()
 					currentState = 2;
 				else if (isalpha(readChar))
 					currentState = 3;
-				else if (issymbol(readChar))
+				else if (isSymbol(readChar))
 					currentState = 4;
-				else if (isequal(readChar))
+				else if (isEqual(readChar))
 					currentState = 5;
 				else if (isWhitespace(readChar))
 				{
@@ -38,7 +37,6 @@ Token Lexer::getNextToken()
 				else if (isEOF(readChar))
 				{
 					reset();
-					endOfLexicalAnalysis = true;
 					return Token(Parser::getTokenId("eof"), "eof", line);
 				}
 				else halt = true;
@@ -57,7 +55,7 @@ Token Lexer::getNextToken()
 				halt = true;
 				break;
 			case 5:
-				if (isequal(readChar))
+				if (isEqual(readChar))
 					currentState = 6;
 				else halt = true;
 				break;
@@ -115,7 +113,7 @@ Token Lexer::getNextToken()
 				{
 					currentIndex--;
 					Token ret = Token(
-							isKeyword(buffer) || issymbol(buffer) ? Parser::getTokenId(buffer)
+							isKeyword(buffer) || isSymbol(buffer) ? Parser::getTokenId(buffer)
 																  : tokenTypeOfState[currentState],
 							buffer, line);
 					reset();
@@ -136,23 +134,21 @@ void Lexer::reset()
 	buffer.clear();
 }
 
-bool Lexer::issymbol(char c)
+bool Lexer::isSymbol(char c)
 {
 	return c == ':' || c == ';' || c == ',' || c == '[' || c == ']' || c == '(' || c == ')' || c == '{' || c == '}' ||
-		   c == '+'
-		   || c == '-' || c == '*' || c == '<';
+		   c == '+' || c == '-' || c == '*' || c == '<';
 }
 
-bool Lexer::issymbol(string s)
+bool Lexer::isSymbol(string s)
 {
 	return s == ":" || s == ";" || s == "," || s == "[" || s == "]" || s == "(" || s == ")" || s == "{" || s == "}" ||
-		   s == "+"
-		   || s == "-" || s == "*" || s == "<" || s == "=" || s == "==";
+		   s == "+" || s == "-" || s == "*" || s == "<" || s == "=" || s == "==";
 }
 
 bool Lexer::valid(char c)
 {
-	return isalnum(c) || issymbol(c) || isWhitespace(c) || c == '=' || c == '/' || c == '\0';
+	return isalnum(c) || isSymbol(c) || isWhitespace(c) || c == '=' || c == '/' || c == '\0';
 }
 
 bool Lexer::isWhitespace(char c)
@@ -160,7 +156,7 @@ bool Lexer::isWhitespace(char c)
 	return c == 32 || isEndline(c) || c == 13 || c == 9 || c == 11 || c == 12;
 }
 
-bool Lexer::isequal(char c)
+bool Lexer::isEqual(char c)
 {
 	return c == '=';
 }
@@ -191,9 +187,4 @@ bool Lexer::isKeyword(string buffer)
 bool Lexer::isEOF(char c)
 {
 	return c == '\0' || currentIndex >= input.length();
-}
-
-bool Lexer::isLexingEnded()
-{
-	return endOfLexicalAnalysis;
 }
