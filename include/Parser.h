@@ -57,9 +57,9 @@ private:
 
 	void missingNonTerminal(TokenId nonTerminal);
 
-	void unexpectedEndOfFile();
+	string unexpectedEndOfFile();
 
-	void malformedInput();
+	string malformedInput();
 };
 
 

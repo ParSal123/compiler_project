@@ -163,7 +163,7 @@ void Parser::parse(int dfa, int level, bool canParseEps)
 						printTree(id, level);
 					else if (id == tokenIndices["eof"])
 					{
-						malformedInput();
+						throw malformedInput();
 						return;
 					}
 					else missingTerminal(id);
@@ -172,14 +172,14 @@ void Parser::parse(int dfa, int level, bool canParseEps)
 				{
 					while (!isInFirst(tokenId, id) && !isInFollow(tokenId, id))
 					{
+						if (tokenId == tokenIndices["eof"])
+						{
+							throw unexpectedEndOfFile();
+							return;
+						}
 						unexpectedTerminal();
 						currentToken = getNextToken();
 						tokenId = currentToken.getType();
-						if (tokenId == ERROR_TOKEN_ID)
-						{
-							unexpectedEndOfFile();
-							return;
-						}
 					}
 					printTree(id, level);
 
@@ -239,8 +239,14 @@ bool Parser::isNonTerminal(int token)
 void Parser::parse()
 {
 	parseTree << "Program" << endl;
-
-	parse(getTokenId("Program"), 1, false);
+	try
+	{
+		parse(getTokenId("Program"), 1, false);
+	}
+	catch (string msg)
+	{
+		errors << msg << endl;
+	}
 }
 
 void Parser::missingTerminal(TokenId terminalId)
@@ -261,12 +267,12 @@ void Parser::missingNonTerminal(TokenId nonTerminal)
 		   << endl;
 }
 
-void Parser::unexpectedEndOfFile()
+string Parser::unexpectedEndOfFile()
 {
-	errors << "#" << currentToken.getLine() << " : Syntax Error! Unexpected EndOfFile" << endl;
+	return "#" + to_string(currentToken.getLine()) + " : Syntax Error! Unexpected EndOfFile";
 }
 
-void Parser::malformedInput()
+string Parser::malformedInput()
 {
-	errors << "#" << currentToken.getLine() << " : Syntax Error! Malformed Input" << endl;
+	return "#" + to_string(currentToken.getLine()) + " : Syntax Error! Malformed Input";
 }
