@@ -33,9 +33,9 @@ void Parser::print()
 
 Parser::Parser(string inputProgram) : program(inputProgram), lexer(inputProgram)
 {
-	parseTree.open("../parseTree.txt");
-	errors.open("../errors.txt");
-	ifstream fin("../res/grammar.txt");
+	parseTree.open(PARSE_TREE_ADDRESS);
+	errors.open(ERRORS_ADDRESS);
+	ifstream fin(GRAMMAR_ADDRESS);
 	int numberOfTokensInRule = 0;
 	TransitionDiagram *currentDiagram = nullptr;
 	DiagramPath *currentPath = nullptr;
@@ -103,7 +103,7 @@ Parser::Parser(string inputProgram) : program(inputProgram), lexer(inputProgram)
 
 void Parser::initFirstFollow()
 {
-	ifstream fin("../res/firstfollow.txt");
+	ifstream fin(FIRST_FOLLOW_ADDRESS);
 	string input;
 	while (getline(fin, input))
 	{

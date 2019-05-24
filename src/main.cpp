@@ -1,8 +1,10 @@
 #include "Parser.h"
+
+
 int main()
 {
 	string input;
-	ifstream fin("../res/input.txt");
+	ifstream fin(PROGRAM_ADDRESS);
 	stringstream buffer;
 	buffer << fin.rdbuf();
 	input = buffer.str();
