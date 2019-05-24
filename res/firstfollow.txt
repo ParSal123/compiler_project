@@ -76,7 +76,7 @@ eof continue break ; { if while return switch id ( num + - }
 yes
 no
 
-CompundStmt
+CompoundStmt
 {
 case default else int void eof continue break ; { if while return switch id ( num + - }
 no

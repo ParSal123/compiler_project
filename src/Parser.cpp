@@ -6,34 +6,36 @@
 
 Parser::TokenToIndicesMap Parser::tokenIndices;
 Parser::IndicesToTokenMap Parser::tokenNames;
+
 void Parser::print()
 {
 //	for(auto word: tokenIndices)
 	for (auto &i : diagrams)
 	{
-		cout << i.first <<" "<<tokenNames[i.first] << endl;
+		cout << i.first << " " << tokenNames[i.first] << endl;
 		for (auto &path: i.second)
 		{
 			for (int j : path)
 				cout << tokenNames[j] << " ";
 			cout << endl;
 		}
-		cout<<"First: "<<endl;
+		cout << "First: " << endl;
 		for (auto j : first[i.first])
-			cout << tokenNames[j] <<" ";
-		cout <<endl << "Follow: " << endl;
+			cout << tokenNames[j] << " ";
+		cout << endl << "Follow: " << endl;
 		for (auto j : follow[i.first])
-			cout << tokenNames[j] <<" ";
-		cout <<endl;
-		cout<<"______________\n"<<endl;
+			cout << tokenNames[j] << " ";
+		cout << endl;
+		cout << "______________\n" << endl;
 	}
-	for(auto &i : tokenIndices)
-		cout << i.second << " "<<i.first<<endl;
+	for (auto &i : tokenIndices)
+		cout << i.second << " " << i.first << endl;
 }
 
 Parser::Parser(string inputProgram) : program(inputProgram), lexer(inputProgram)
 {
-    parseTree.open("../parseTree.txt");
+	parseTree.open("../parseTree.txt");
+	errors.open("../errors.txt");
 	ifstream fin("../res/grammar.txt");
 	int numberOfTokensInRule = 0;
 	TransitionDiagram *currentDiagram = nullptr;
@@ -139,43 +141,84 @@ void Parser::parse(int dfa, int level, bool canParseEps)
 	int tokenId = currentToken.getType();
 	for (auto &path : diagrams[dfa])
 	{
-        int firstToken = path[0];
-		if ((!isNonTerminal(firstToken) && firstToken == tokenId)
-				|| (firstToken == EPSILON_TOKEN_ID && canParseEps)
-                || (isNonTerminal(firstToken) && isInFirst(tokenId, firstToken))
-                || (isNonTerminal(firstToken) && isInFirst(EPSILON_TOKEN_ID, firstToken) && isInFollow(tokenId, firstToken)))
-        {
+		int firstToken = path[0];
 
-            for (TokenId id : path)
-            {
-                if (!isNonTerminal(id))
+		if ((!isNonTerminal(firstToken) && firstToken == tokenId)
+			|| (firstToken == EPSILON_TOKEN_ID && canParseEps)
+			|| (isNonTerminal(firstToken) && isInFirst(tokenId, firstToken))
+			||
+			(isNonTerminal(firstToken) && isInFirst(EPSILON_TOKEN_ID, firstToken) && isInFollow(tokenId, firstToken)))
+		{
+
+			for (TokenId id : path)
+			{
+				if (!isNonTerminal(id))
 				{
 					if (id == tokenId)
 					{
 						printTree(tokenId, level);
-						currentToken = lexer.getNextToken();
+						currentToken = getNextToken();
 					}
 					else if (id == EPSILON_TOKEN_ID && canParseEps)
 						printTree(id, level);
+					else if (id == tokenIndices["eof"])
+					{
+						malformedInput();
+						return;
+					}
+					else missingTerminal(id);
 				}
-                else// TODO: error
-                {
-                    printTree(id, level);
-                    parse(id, level + 1, isInFollow(tokenId, dfa));
-                }
+				else
+				{
+					while (!isInFirst(tokenId, id) && !isInFollow(tokenId, id))
+					{
+						unexpectedTerminal();
+						currentToken = getNextToken();
+						tokenId = currentToken.getType();
+						if (tokenId == ERROR_TOKEN_ID)
+						{
+							unexpectedEndOfFile();
+							return;
+						}
+					}
+					printTree(id, level);
+
+					if (isInFirst(tokenId, id) ||
+						(isInFirst(EPSILON_TOKEN_ID, id) && isInFollow(tokenId, id)))
+						parse(id, level + 1, isInFollow(tokenId, dfa));
+					else
+						missingNonTerminal(id);
+				}
 				tokenId = currentToken.getType();
 			}
-            return;
-        }
+			return;
+		}
 
 	}
 }
 
+Token Parser::getNextToken()
+{
+	auto ret = lexer.getNextToken();
+	if (ret.getType() == ERROR_TOKEN_ID)
+	{
+		lexingError(ret);
+		return getNextToken();
+	}
+	else return ret;
+
+}
+
+void Parser::lexingError(Token token)
+{
+	errors << token.getLine() << ". Lexing Error! \"" << token.getValue() <<"\"" << endl;
+}
+
 void Parser::printTree(TokenId id, int level)
 {
-    while (level--)
-        Parser::parseTree << "|\t";
-    Parser::parseTree << tokenNames[id] << endl;
+	while (level--)
+		Parser::parseTree << "|\t";
+	Parser::parseTree << tokenNames[id] << endl;
 }
 
 bool Parser::isInFirst(int token, int nonTerminal)
@@ -195,7 +238,35 @@ bool Parser::isNonTerminal(int token)
 
 void Parser::parse()
 {
-	parseTree << "Program" <<endl;
+	parseTree << "Program" << endl;
 
 	parse(getTokenId("Program"), 1, false);
+}
+
+void Parser::missingTerminal(TokenId terminalId)
+{
+	errors << "#" << currentToken.getLine() << " : Syntax Error! Missing Terminal " << tokenNames[terminalId] << endl;
+}
+
+void Parser::unexpectedTerminal()
+{
+	errors << "#" << currentToken.getLine() << " : Syntax Error! Unexpected Terminal "
+		   << tokenNames[currentToken.getType()]
+		   << endl;
+}
+
+void Parser::missingNonTerminal(TokenId nonTerminal)
+{
+	errors << "#" << currentToken.getLine() << " : Syntax Error! Missing Nonterminal " << tokenNames[nonTerminal]
+		   << endl;
+}
+
+void Parser::unexpectedEndOfFile()
+{
+	errors << "#" << currentToken.getLine() << " : Syntax Error! Unexpected EndOfFile" << endl;
+}
+
+void Parser::malformedInput()
+{
+	errors << "#" << currentToken.getLine() << " : Syntax Error! Malformed Input" << endl;
 }

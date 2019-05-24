@@ -34,7 +34,7 @@ private:
 	NonTerminalSet nonTerminal;
 	static TokenToIndicesMap tokenIndices;
 	static IndicesToTokenMap tokenNames;
-    ofstream parseTree;
+    ofstream parseTree, errors;
 	DiagramList diagrams;
 	Lexer lexer;
 	Token currentToken;
@@ -46,6 +46,20 @@ private:
 
 	void parse(int dfa, int level, bool canParseEps);
     void printTree(TokenId id, int level);
+
+	Token getNextToken();
+
+	void lexingError(Token token);
+
+	void missingTerminal(TokenId terminalId);
+
+	void unexpectedTerminal();
+
+	void missingNonTerminal(TokenId nonTerminal);
+
+	void unexpectedEndOfFile();
+
+	void malformedInput();
 };
 
 

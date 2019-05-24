@@ -1,23 +1,4 @@
 void main(void){
-    int a;
-    /* comm
-    ababa
-    fhf hjof
-    f huf
-    f'bhdf
-    hjent2
-     dd*/
-    a = 2 + +2;
-    a = a + -3;
-    cde = a;
-    if (b /* comment1 */ == 3) {
-        a = 3;
-        cde  = -7;
-    }
-    else
-    {
-        b = a < cde;
-        {cde = 2;
-    }}
+    a = 12;
     return;
 }
