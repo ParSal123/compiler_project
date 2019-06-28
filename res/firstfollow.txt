@@ -4,27 +4,9 @@ eof int void
 no
 yes
 
-Dec
-int void
-int void eof continue break ; { if while return switch id ( num + - }
-no
-no
-
-FTypeSpec_2
-id
-int void eof continue break ; { if while return switch id ( num + - }
-no
-no
-
 Fid_4
-( ; [
-int void eof continue break ; { if while return switch id ( num + - }
-no
-no
-
-Fid_1
-; [
-int void eof continue break ; { if while return switch id ( num + - }
+; [ (
+int void eof if while return switch continue break { ; id ( num + - }
 no
 no
 
@@ -40,28 +22,16 @@ id
 yes
 no
 
-ParamList_1
-,
-)
-yes
-no
-
-Param
-int void
-, )
-no
-no
-
 TypeSpec
 int void
 id
 no
 no
 
-FTypeSpec_1
-id
-, )
-no
+ParamList
+,
+)
+yes
 no
 
 Fid_2
@@ -70,61 +40,31 @@ Fid_2
 yes
 no
 
-DecList_1
+DecList
 int void
-eof continue break ; { if while return switch id ( num + - }
+eof if while return switch continue break { ; id ( num + - }
 yes
 no
 
 CompoundStmt
 {
-case default else int void eof continue break ; { if while return switch id ( num + - }
-no
-no
-
-ExprStmt
-continue break ; id ( num + -
-case default continue break ; { if while return switch id ( num + - else }
-no
-no
-
-SelectStmt
-if
-case default continue break ; { if while return switch id ( num + - else }
-no
-no
-
-IterStmt
-while
-case default continue break ; { if while return switch id ( num + - else }
+case default else int void eof if while return switch continue break { ; id ( num + - }
 no
 no
 
 Stmt
-continue break ; { if while return switch id ( num + -
-case default continue break ; { if while return switch id ( num + - else }
-no
-no
-
-RetStmt
-return
-case default continue break ; { if while return switch id ( num + - else }
+if while return switch continue break { ; id ( num + -
+case default if while return switch continue break { ; id ( num + - else }
 no
 no
 
 Freturn
 ; id ( num + -
-case default continue break ; { if while return switch id ( num + - else }
+case default if while return switch continue break { ; id ( num + - else }
 no
 no
 
-SwitchStmt
-switch
-case default continue break ; { if while return switch id ( num + - else }
-no
-no
-
-CaseStmts_1
+CaseStmts
 case
 default }
 yes
@@ -142,28 +82,16 @@ default
 yes
 no
 
-StmtList_1
-continue break ; { if while return switch id ( num + -
+StmtList
+if while return switch continue break { ; id ( num + -
 case default }
 yes
 no
 
 Fid_5
-= [ ( * + - < ==
+( [ = * + - < ==
 ; ] ) ,
 yes
-no
-
-F[
-id ( num + -
-; ] ) ,
-no
-no
-
-FExpr
-]
-; ] ) ,
-no
 no
 
 F]
@@ -184,22 +112,10 @@ Relop
 no
 no
 
-AddExpr
-+ - ( id num
-; ] ) ,
-no
-no
-
 AddExpr_1
 + -
 < == ; ] ) ,
 yes
-no
-
-AddOp
-+ -
-+ - ( id num
-no
 no
 
 Term
@@ -234,7 +150,7 @@ no
 
 Fid
 [
-* + - < == ; ] ) ,
+= * + - < == ; ] ) ,
 yes
 no
 
@@ -242,12 +158,6 @@ Args
 id ( num + -
 )
 yes
-no
-
-ArgList
-id ( num + -
-)
-no
 no
 
 Expr
