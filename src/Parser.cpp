@@ -96,7 +96,7 @@ Parser::Parser()
 		tokenNames[token.second] = token.first;
 	}
 	initFirstFollow();
-	currentToken = lexer->getNextToken();
+//	currentToken = lexer->getNextToken();
 }
 
 void Parser::initFirstFollow()

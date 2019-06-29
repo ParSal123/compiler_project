@@ -17,11 +17,13 @@ Token* Lexer::getNextToken()
 	{
 		readChar = input[currentIndex++];
         line += (readChar == '\n');
+//        cerr << "current state is: " << currentState;
+//        cerr << " current char is: " << readChar << endl;
 		switch (currentState)
 		{
 			case 1:
                 // symbols
-                if (isSymbol(readChar))
+                if (readChar != '=' && isSymbol(readChar))
                 {
                     return generateToken(-1);
                 }
@@ -74,11 +76,11 @@ Token* Lexer::getNextToken()
                 else
                 {
                     currentIndex--;
+                    line -= (readChar == '\n');
                     return generateToken(NUM_TOKEN_ID);
                 }
 				break;
 			case 3:
-                cout << readChar;
                 if (!isValid(readChar))
                 {
                     return generateToken(ERROR_TOKEN_ID);
@@ -86,6 +88,7 @@ Token* Lexer::getNextToken()
                 else if (!isalnum(readChar))
                 {
                     currentIndex--;
+                    line -= (readChar == '\n');
                     return generateToken(ID_TOKEN_ID);
                 }
 				break;
@@ -104,6 +107,7 @@ Token* Lexer::getNextToken()
                 else
                 {
                     currentIndex--;
+                    line -= (readChar == '\n');
                     return generateToken(-1);
                 }
 				break;
@@ -128,6 +132,7 @@ Token* Lexer::getNextToken()
                 if (readChar == 0)
                 {
                     currentIndex--;
+                    line -= (readChar == '\n');
                     startIndex = currentIndex;
                     currentState = 1;
                 }
@@ -173,18 +178,15 @@ Token* Lexer::generateToken(int type)
     if (type == -1)
         type = Parser::getTokenId(buffer);
     Token *ret = new Token(type, buffer, line);
-    cerr << buffer << " " << type << endl;
+//    cerr << buffer << " " << type << endl;
     if (type == ERROR_TOKEN_ID)
     {
         errorFile << "Lexer: Line " << line << ". Unknown Token \"" << buffer << "\"\n";
     }
     else
     {
-        cerr << "must reach here\n";
-//        lexerOutFile << "Line " << line << ", TokenId " << type << ", Value " << buffer << endl;
-        lexerOutFile << "Salam baradar\n";
+        lexerOutFile << "Line #" << line << ", TokenType: " << Parser::tokenNames[type] << ", Value: " << buffer << endl;
     }
-    cerr << "reaches here too\n";
     currentState = startState;
     startIndex = currentIndex;
     return ret;

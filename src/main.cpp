@@ -8,8 +8,7 @@ ofstream lexerOutFile(LEXER_OUT_ADDRESS);
 
 int main()
 {
-    lexerOutFile << "salam" << endl;
-//    while (lexer->getNextToken());
+    while (lexer->getNextToken());
     errorFile.close();
     lexerOutFile.close();
 //	parser->print();
