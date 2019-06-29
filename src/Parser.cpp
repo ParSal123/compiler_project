@@ -4,8 +4,8 @@
 
 #include "Parser.h"
 
-Parser::TokenToIndicesMap Parser::tokenIndices;
-Parser::IndicesToTokenMap Parser::tokenNames;
+TokenToIndicesMap Parser::tokenIndices;
+IndicesToTokenMap Parser::tokenNames;
 
 void Parser::print()
 {
@@ -31,10 +31,9 @@ void Parser::print()
 		cout << i.second << " " << i.first << endl;
 }
 
-Parser::Parser(string inputProgram) : program(inputProgram), lexer(inputProgram)
+Parser::Parser()
 {
 	parseTree.open(PARSE_TREE_ADDRESS);
-	errors.open(ERRORS_ADDRESS);
 	ifstream fin(GRAMMAR_ADDRESS);
 	int numberOfTokensInRule = 0;
 	TransitionDiagram *currentDiagram = nullptr;
@@ -97,8 +96,7 @@ Parser::Parser(string inputProgram) : program(inputProgram), lexer(inputProgram)
 		tokenNames[token.second] = token.first;
 	}
 	initFirstFollow();
-	currentToken = lexer.getNextToken();
-
+	currentToken = lexer->getNextToken();
 }
 
 void Parser::initFirstFollow()
@@ -132,7 +130,7 @@ int Parser::getTokenId(string s)
 
 void Parser::parse(int dfa, int level, bool canParseEps)
 {
-	int tokenId = currentToken.getType();
+	int tokenId = currentToken->getType();
 	for (auto &path : diagrams[dfa])
 	{
 		int firstToken = path[0];
@@ -169,7 +167,7 @@ void Parser::parse(int dfa, int level, bool canParseEps)
 							throw unexpectedEndOfFile();
 						unexpectedTerminal();
 						currentToken = getNextToken();
-						tokenId = currentToken.getType();
+						tokenId = currentToken->getType();
 					}
 					printTree(id, level);
 
@@ -179,28 +177,22 @@ void Parser::parse(int dfa, int level, bool canParseEps)
 					else
 						missingNonTerminal(id);
 				}
-				tokenId = currentToken.getType();
+				tokenId = currentToken->getType();
 			}
 			return;
 		}
 	}
 }
 
-Token Parser::getNextToken()
+Token* Parser::getNextToken()
 {
-	auto ret = lexer.getNextToken();
-	if (ret.getType() == ERROR_TOKEN_ID)
+	auto ret = lexer->getNextToken();
+	if (ret->getType() == ERROR_TOKEN_ID)
 	{
-		lexingError(ret);
 		return getNextToken();
 	}
 	else return ret;
 
-}
-
-void Parser::lexingError(Token token)
-{
-	errors << token.getLine() << ". Lexing Error! \"" << token.getValue() <<"\"" << endl;
 }
 
 void Parser::printTree(TokenId id, int level, bool missed)
@@ -236,34 +228,34 @@ void Parser::parse()
 	}
 	catch (string msg)
 	{
-		errors << msg << endl;
+		errorFile << msg << endl;
 	}
 }
 
 void Parser::missingTerminal(TokenId terminalId)
 {
-	errors << "#" << currentToken.getLine() << " : Syntax Error! Missing Terminal " << tokenNames[terminalId] << endl;
+	errorFile << "#" << currentToken->getLine() << " : Syntax Error! Missing Terminal " << tokenNames[terminalId] << endl;
 }
 
 void Parser::unexpectedTerminal()
 {
-	errors << "#" << currentToken.getLine() << " : Syntax Error! Unexpected Terminal "
-		   << tokenNames[currentToken.getType()]
+	errorFile << "#" << currentToken->getLine() << " : Syntax Error! Unexpected Terminal "
+		   << tokenNames[currentToken->getType()]
 		   << endl;
 }
 
 void Parser::missingNonTerminal(TokenId nonTerminal)
 {
-	errors << "#" << currentToken.getLine() << " : Syntax Error! Missing Nonterminal " << tokenNames[nonTerminal]
+	errorFile << "#" << currentToken->getLine() << " : Syntax Error! Missing Nonterminal " << tokenNames[nonTerminal]
 		   << endl;
 }
 
 string Parser::unexpectedEndOfFile()
 {
-	return "#" + to_string(currentToken.getLine()) + " : Syntax Error! Unexpected EndOfFile";
+	return "#" + to_string(currentToken->getLine()) + " : Syntax Error! Unexpected EndOfFile";
 }
 
 string Parser::malformedInput()
 {
-	return "#" + to_string(currentToken.getLine()) + " : Syntax Error! Malformed Input";
+	return "#" + to_string(currentToken->getLine()) + " : Syntax Error! Malformed Input";
 }

@@ -1,190 +1,203 @@
-//
-// Created by Kiarash on 12/04/2019.
-//
 
 #include "Parser.h"
 #include "Lexer.h"
 
-Lexer::Lexer(string input) : input(input)
-{}
-
-
-Token Lexer::getNextToken()
+Lexer::Lexer(string address)
 {
-	while (true)
+	ifstream fin(address);
+	stringstream buffer;
+	buffer << fin.rdbuf();
+	input = buffer.str();
+}
+
+Token* Lexer::getNextToken()
+{
+    char readChar;
+	while (currentIndex < input.size())
 	{
-		char readChar = input[currentIndex++];
-		bool validChar = true, halt = false;
+		readChar = input[currentIndex++];
+        line += (readChar == '\n');
 		switch (currentState)
 		{
 			case 1:
-				if (isdigit(readChar))
-					currentState = 2;
-				else if (isalpha(readChar))
-					currentState = 3;
-				else if (isSymbol(readChar))
-					currentState = 4;
-				else if (isEqual(readChar))
-					currentState = 5;
-				else if (isWhitespace(readChar))
-				{
-					if (isEndline(readChar))
-						line++;
-					currentState = 7;
-				}
-				else if (isSlash(readChar))
-					currentState = 8;
-				else if (isEOF(readChar))
-				{
-					reset();
-					return Token(Parser::getTokenId("eof"), "eof", line);
-				}
-				else halt = true;
+                // symbols
+                if (isSymbol(readChar))
+                {
+                    return generateToken(-1);
+                }
+                else if (readChar == '=')
+                {
+                    currentState = 4;
+                }
+                // end of file
+                else if (readChar == 0)
+                {
+                    return generateToken(Parser::tokenIndices["eof"]);
+                }
+                // num
+                else if (isdigit(readChar))
+                {
+                    currentState = 2;
+                }
+                // comment
+                else if (readChar == '/')
+                {
+                    currentState = 5;
+                }
+                // id
+                else if (isalpha(readChar))
+                {
+                    currentState = 3;
+                }
+                // whitespace
+                else if (isspace(readChar))
+                {
+                    startIndex = currentIndex;
+                }
+                // invalid char
+                else if (!isValid(readChar))
+                {
+                    return generateToken(ERROR_TOKEN_ID);
+                }
 				break;
 			case 2:
+                // num
 				if (isdigit(readChar))
+                {
 					currentState = 2;
-				else halt = true;
+                }
+                // invalid char
+                else if (!isValid(readChar))
+                {
+                    return generateToken(ERROR_TOKEN_ID);
+                }
+                else
+                {
+                    currentIndex--;
+                    return generateToken(NUM_TOKEN_ID);
+                }
 				break;
 			case 3:
-				if (isalnum(readChar))
-					currentState = 3;
-				else halt = true;
+                cout << readChar;
+                if (!isValid(readChar))
+                {
+                    return generateToken(ERROR_TOKEN_ID);
+                }
+                else if (!isalnum(readChar))
+                {
+                    currentIndex--;
+                    return generateToken(ID_TOKEN_ID);
+                }
 				break;
 			case 4:
-				halt = true;
+                // == token
+                if (readChar == '=')
+                {
+                    return generateToken(-1);
+                }
+                // invalid char
+                else if (!isValid(readChar))
+                {
+                    return generateToken(ERROR_TOKEN_ID);
+                }
+                // = char, need to retract
+                else
+                {
+                    currentIndex--;
+                    return generateToken(-1);
+                }
 				break;
 			case 5:
-				if (isEqual(readChar))
+                // one line comment
+				if (readChar == '/')
+                {
 					currentState = 6;
-				else halt = true;
-				break;
-			case 6:
-				halt = true;
-				break;
-			case 7:
-				halt = true;
-				break;
-			case 8:
-				if (isSlash(readChar))
-					currentState = 9;
-				else if (isStar(readChar))
-					currentState = 10;
+                }
+                // multi-line comment
+				else if (readChar == '*')
+                {
+					currentState = 7;
+                }
 				else
 				{
-					validChar = false;
-					halt = true;
+                    return generateToken(ERROR_TOKEN_ID);
 				}
 				break;
-			case 9:
-				if (!isEndline(readChar))
-					currentState = 9;
-				else currentState = 12;
+			case 6:
+                // end of file
+                if (readChar == 0)
+                {
+                    currentIndex--;
+                    startIndex = currentIndex;
+                    currentState = 1;
+                }
+                // end of line
+                else if (readChar == '\n')
+                {
+                    startIndex = currentIndex;
+                    currentState = 1;
+                }
 				break;
-			case 10:
-				if (isEndline(readChar)) line++;
-				if (isStar(readChar))
-					currentState = 11;
-				else currentState = 10;
+			case 7:
+				if (readChar == '*')
+                {
+					currentState = 8;
+                }
 				break;
-			case 11:
-				if (isEndline(readChar)) line++;
-				if (isSlash(readChar))
-					currentState = 12;
-				else currentState = 10;
-				break;
-			case 12:
-				halt = true;
+			case 8:
+				if (readChar == '/')
+                {
+                    startIndex = currentIndex;
+					currentState = 1;
+                }
+                else
+                {
+                    currentState = 7;
+                }
 				break;
 			default:
 				break;
 		}
-		if (halt)
-		{
-			if (!valid(readChar) || !validChar)
-			{
-				Token ret = Token(ERROR_TOKEN_ID, buffer + readChar, line);
-				reset();
-				return ret;
-			}
-			else
-			{
-				if (tokenTypeOfState[currentState] != -1)
-				{
-					currentIndex--;
-					Token ret = Token(
-							isKeyword(buffer) || isSymbol(buffer) ? Parser::getTokenId(buffer)
-																  : tokenTypeOfState[currentState],
-							buffer, line);
-					reset();
-					if (ret.getType() < 0) return getNextToken();
-					return ret;
-				}
-			}
-			currentIndex--;
-			reset();
-		}
-		else buffer += readChar;
 	}
+    // last token ended in eof
+    if (startIndex != currentIndex)
+    {
+        return generateToken(ERROR_TOKEN_ID);
+    }
+    return nullptr;
 }
 
-void Lexer::reset()
+Token* Lexer::generateToken(int type)
 {
-	currentState = startState;
-	buffer.clear();
+    string buffer = input.substr(startIndex, currentIndex - startIndex);
+    if (type == -1)
+        type = Parser::getTokenId(buffer);
+    Token *ret = new Token(type, buffer, line);
+    cerr << buffer << " " << type << endl;
+    if (type == ERROR_TOKEN_ID)
+    {
+        errorFile << "Lexer: Line " << line << ". Unknown Token \"" << buffer << "\"\n";
+    }
+    else
+    {
+        cerr << "must reach here\n";
+//        lexerOutFile << "Line " << line << ", TokenId " << type << ", Value " << buffer << endl;
+        lexerOutFile << "Salam baradar\n";
+    }
+    cerr << "reaches here too\n";
+    currentState = startState;
+    startIndex = currentIndex;
+    return ret;
 }
 
 bool Lexer::isSymbol(char c)
 {
 	return c == ':' || c == ';' || c == ',' || c == '[' || c == ']' || c == '(' || c == ')' || c == '{' || c == '}' ||
-		   c == '+' || c == '-' || c == '*' || c == '<';
+		   c == '+' || c == '-' || c == '*' || c == '<' || c == '=';
 }
 
-bool Lexer::isSymbol(string s)
+bool Lexer::isValid(char c)
 {
-	return s == ":" || s == ";" || s == "," || s == "[" || s == "]" || s == "(" || s == ")" || s == "{" || s == "}" ||
-		   s == "+" || s == "-" || s == "*" || s == "<" || s == "=" || s == "==";
+	return isalnum(c) || isSymbol(c) || isspace(c) || c == '/' || c == '\0';
 }
 
-bool Lexer::valid(char c)
-{
-	return isalnum(c) || isSymbol(c) || isWhitespace(c) || c == '=' || c == '/' || c == '\0';
-}
-
-bool Lexer::isWhitespace(char c)
-{
-	return c == 32 || isEndline(c) || c == 13 || c == 9 || c == 11 || c == 12;
-}
-
-bool Lexer::isEqual(char c)
-{
-	return c == '=';
-}
-
-bool Lexer::isEndline(char c)
-{
-	return c == '\n';
-}
-
-bool Lexer::isSlash(char c)
-{
-	return c == '/';
-}
-
-bool Lexer::isStar(char c)
-{
-	return c == '*';
-}
-
-
-bool Lexer::isKeyword(string buffer)
-{
-	return buffer == "if" || buffer == "else" || buffer == "void" || buffer == "int" || buffer == "while"
-		   || buffer == "break" || buffer == "continue" || buffer == "switch" || buffer == "default"
-		   || buffer == "case" || buffer == "return";
-}
-
-bool Lexer::isEOF(char c)
-{
-	return c == '\0' || currentIndex >= input.length();
-}

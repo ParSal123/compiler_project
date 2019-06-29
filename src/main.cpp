@@ -1,16 +1,18 @@
+
 #include "Parser.h"
 
+Lexer *lexer = new Lexer(PROGRAM_ADDRESS);
+Parser *parser = new Parser();
+ofstream errorFile(ERRORS_ADDRESS);
+ofstream lexerOutFile(LEXER_OUT_ADDRESS);
 
 int main()
 {
-	string input;
-	ifstream fin(PROGRAM_ADDRESS);
-	stringstream buffer;
-	buffer << fin.rdbuf();
-	input = buffer.str();
-
-	Parser parser(input);
-//	parser.print();
-	parser.parse();
+    lexerOutFile << "salam" << endl;
+//    while (lexer->getNextToken());
+    errorFile.close();
+    lexerOutFile.close();
+//	parser->print();
+//	parser->parse();
 	return 0;
 }
