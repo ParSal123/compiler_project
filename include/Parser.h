@@ -36,6 +36,7 @@ private:
 	DiagramList diagrams;
 	Token *currentToken;
 
+    ~Parser();
 	Token* getNextToken();
 	void initFirstFollow();
 	bool isInFirst(int token, int nonTerminal);
@@ -43,9 +44,10 @@ private:
 	bool isNonTerminal(TokenId token);
 	void parse(int dfa, int level, bool canParseEps);
     void printTree(TokenId id, int level, bool missed = false);
-	void missingTerminal(TokenId terminalId);
-	void unexpectedTerminal();
-	void missingNonTerminal(TokenId nonTerminal);
+    void printError(string msg);
+	string missingTerminal(TokenId terminalId);
+	string unexpectedTerminal();
+	string missingNonTerminal(TokenId nonTerminal);
 	string unexpectedEndOfFile();
 	string malformedInput();
 

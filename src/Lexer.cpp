@@ -4,6 +4,7 @@
 
 Lexer::Lexer(string address)
 {
+    lexerOutFile.open(LEXER_OUT_ADDRESS);
 	ifstream fin(address);
 	stringstream buffer;
 	buffer << fin.rdbuf();
@@ -13,7 +14,7 @@ Lexer::Lexer(string address)
 Token* Lexer::getNextToken()
 {
     char readChar;
-	while (currentIndex < input.size())
+	while (currentIndex <= input.size())
 	{
 		readChar = input[currentIndex++];
         line += (readChar == '\n');
@@ -89,7 +90,7 @@ Token* Lexer::getNextToken()
                 {
                     currentIndex--;
                     line -= (readChar == '\n');
-                    return generateToken(ID_TOKEN_ID);
+                    return generateToken(-1);
                 }
 				break;
 			case 4:
@@ -181,15 +182,20 @@ Token* Lexer::generateToken(int type)
 //    cerr << buffer << " " << type << endl;
     if (type == ERROR_TOKEN_ID)
     {
-        errorFile << "Lexer: Line " << line << ". Unknown Token \"" << buffer << "\"\n";
+        errorFile << "Lexer: Line #" << line << " - Unknown Token \"" << buffer << "\"\n";
     }
     else
     {
-        lexerOutFile << "Line #" << line << ", TokenType: " << Parser::tokenNames[type] << ", Value: " << buffer << endl;
+        lexerOutFile << "Lexer: Line #" << line << " - TokenType: " << Parser::tokenNames[type] << " - Value: " << buffer << endl;
     }
     currentState = startState;
     startIndex = currentIndex;
     return ret;
+}
+
+Lexer::~Lexer()
+{
+    lexerOutFile.close();
 }
 
 bool Lexer::isSymbol(char c)

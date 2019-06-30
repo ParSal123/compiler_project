@@ -17,10 +17,12 @@ private:
 	const int startState = 1;
 	unsigned int currentIndex = 0, startIndex = 0;
 	string input;
+    ofstream lexerOutFile;
 
 	bool isSymbol(char character);
 	bool isValid(char c);
     Token* generateToken(int type);
+    ~Lexer();
 
 };
 
