@@ -3,6 +3,7 @@
 //
 
 #include "Parser.h"
+#include "SemanticAnalyser.h"
 
 TokenToIndicesMap Parser::tokenIndices;
 IndicesToTokenMap Parser::tokenNames;
