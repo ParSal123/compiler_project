@@ -1,0 +1,95 @@
+Program -> DecList eof .
+
+DecList -> TypeSpec id Fid_4 DecList 
+            | .
+
+Fid_4 -> ;
+        | [ num ] ;
+        | ( Params ) CompoundStmt .
+
+TypeSpec -> int 
+           | void .
+
+Params -> int id Fid_2 ParamList 
+         | void Fvoid .
+
+Fvoid -> id Fid_2 ParamList 
+        | .
+
+ParamList -> , TypeSpec id Fid_2 ParamList 
+              | .
+
+Fid_2 -> 
+        | [ ] .
+
+CompoundStmt -> { DecList StmtList } .
+
+StmtList -> Stmt StmtList 
+             | .
+
+Stmt -> CompoundStmt 
+       | if ( Expr ) Stmt else Stmt 
+       | while ( Expr ) Stmt 
+       | return Freturn 
+       | switch ( Expr ) { CaseStmts DefaultStmt }
+       | continue ;
+       | break ;
+       | Freturn .
+
+Freturn -> ; 
+          | Expr ; .
+
+CaseStmts -> CaseStmt CaseStmts 
+              | .
+
+CaseStmt -> case num : StmtList .
+
+DefaultStmt -> default : StmtList 
+              | .
+
+Expr -> id Fid_5 
+       | ( Expr ) Term_1 AddExpr_1 FAddExpr 
+       | num Term_1 AddExpr_1 FAddExpr 
+       | + Factor Term_1 AddExpr_1 FAddExpr 
+       | - Factor Term_1 AddExpr_1 FAddExpr .
+
+Fid_5 -> Fid F]
+        | ( Args ) Term_1 AddExpr_1 FAddExpr .
+
+F] -> = Expr
+     | Term_1 AddExpr_1 FAddExpr .
+
+Fid -> 
+      | [ Expr ] .
+
+FAddExpr -> Relop Term AddExpr_1 
+           | .
+
+Relop -> < 
+        | == .
+
+AddExpr_1 -> + Term AddExpr_1 
+            | - Term AddExpr_1
+            | .
+
+Term -> SignedFactor Term_1 .
+
+Term_1 -> * SignedFactor Term_1 
+         | .
+
+SignedFactor -> Factor 
+               | + Factor 
+               | - Factor .
+
+Factor -> ( Expr ) 
+         | id Fid_3 
+         | num .
+
+Fid_3 -> Fid 
+        | ( Args ) .
+
+Args -> Expr ArgList_1 
+       | .
+
+ArgList_1 -> , Expr ArgList_1 
+            | .
