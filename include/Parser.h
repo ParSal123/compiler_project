@@ -7,56 +7,51 @@
 
 #include "Lexer.h"
 
-class Parser {
-public:
-	Parser(string inputProgram);
+extern Lexer *lexer;
 
+class Parser
+{
+public:
+	static TokenToIndicesMap tokenIndices;
+	static IndicesToTokenMap tokenNames;
+
+	Parser();
 	void print();
 	void parse();
 	static int getTokenId(string s);
+
 private:
-	typedef int TokenId;
-	typedef vector <TokenId> DiagramPath;
-	typedef vector <DiagramPath> TransitionDiagram;
-	typedef unordered_map <TokenId, TransitionDiagram> DiagramList;
-	typedef unordered_map<string, TokenId> TokenToIndicesMap;
-	typedef unordered_map<TokenId, string> IndicesToTokenMap;
+
+	typedef vector<TokenId> DiagramPath;
+	typedef vector<DiagramPath> TransitionDiagram;
+	typedef unordered_map<TokenId, TransitionDiagram> DiagramList;
 	typedef unordered_set<TokenId> NonTerminalSet;
 	typedef unordered_set<TokenId> FirstFollowSet;
 	typedef unordered_map<TokenId, FirstFollowSet> FirstFollowMap;
 
-	string program;
 	int numberOfTokens = 4;
 	FirstFollowMap first, follow;
 	NonTerminalSet nonTerminal;
-	static TokenToIndicesMap tokenIndices;
-	static IndicesToTokenMap tokenNames;
-    ofstream parseTree, errors;
+    ofstream parseTree;
 	DiagramList diagrams;
-	Lexer lexer;
-	Token currentToken;
+	Token *currentToken;
 
+    ~Parser();
+	Token* getNextToken();
 	void initFirstFollow();
 	bool isInFirst(int token, int nonTerminal);
 	bool isInFollow(int token, int nonTerminal);
 	bool isNonTerminal(TokenId token);
-
 	void parse(int dfa, int level, bool canParseEps);
     void printTree(TokenId id, int level, bool missed = false);
-
-	Token getNextToken();
-
-	void lexingError(Token token);
-
-	void missingTerminal(TokenId terminalId);
-
-	void unexpectedTerminal();
-
-	void missingNonTerminal(TokenId nonTerminal);
-
+    void printError(string msg);
+	string missingTerminal(TokenId terminalId);
+	string unexpectedTerminal();
+	string missingNonTerminal(TokenId nonTerminal);
 	string unexpectedEndOfFile();
-
 	string malformedInput();
+
 };
 
 #endif //COMPILER_PROJECT_PARSER_H
+

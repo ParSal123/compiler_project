@@ -15,23 +15,26 @@ private:
 	string value;
 
 public:
-	Token() = default;
+
 	Token(int type, string value, int line) : line(line), type(type), value(value)
 	{}
+
 	int getType()
 	{
 		return type;
 	}
+
 	string getValue()
 	{
 		return value;
 	}
+
 	int getLine()
 	{
 		return line;
 	}
+
 };
 
-
-
 #endif //COMPILER_PROJECT_TOKEN_H
+

@@ -1,16 +1,14 @@
+
 #include "Parser.h"
 
+Lexer *lexer = new Lexer(PROGRAM_ADDRESS);
+Parser *parser = new Parser();
+ofstream errorFile(ERRORS_ADDRESS);
 
 int main()
 {
-	string input;
-	ifstream fin(PROGRAM_ADDRESS);
-	stringstream buffer;
-	buffer << fin.rdbuf();
-	input = buffer.str();
-
-	Parser parser(input);
-//	parser.print();
-	parser.parse();
+	//parser->print();
+	parser->parse();
+    errorFile.close();
 	return 0;
 }
