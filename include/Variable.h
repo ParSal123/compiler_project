@@ -14,12 +14,16 @@ class Scope;
 
 class Variable {
 public:
-    Variable(int address, VariableType type, Scope *container);
+	Variable(int address, int definitionLine, VariableType type, Scope *container);
     Scope *getContainer() const;
 
 private:
-    int address;
-    VariableType type;
+public:
+	int getDefinitionLine() const;
+
+private:
+	int address, definitionLine;
+	VariableType type;
     Scope *container;
 
 };

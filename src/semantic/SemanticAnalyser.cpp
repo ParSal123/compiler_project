@@ -2,9 +2,11 @@
 #include "SemanticAnalyser.h"
 
 int memoryAddressAllocator = MEMORY_START_ADDRESS;
+int programIndex = 0;
+vector<string> pb;
 stack<string> st;
-
-bool variableDeclError(const string &name);
+bool skipDirectives = false;
+bool skipNormalScope = false;
 
 void push()
 {
@@ -14,40 +16,42 @@ void push()
 
 void decl_var()
 {
-	string name = st.top();
-	st.pop();
-    if (!variableDeclError(name))
+	string name = getNameOfId();
+	if (!variableDeclError(name))
 	{
 		currentScope->addVariable(name);
 	}
 }
 
-bool variableDeclError(const string &name) {
-    bool flag = false;
-    if (st.top() == "void") {
-        errorFile << "Line #" << currentToken->getLine() << ": Illegal type of void.\n";
-        flag = true;
-    }
-    st.pop();
-    if (currentScope->getVariable(name) != nullptr) {
-        errorFile << "Line #" << currentToken->getLine() << ": Variable " << name
-                  << " is already defined in this scope.\n";
-        flag = true;
-    }
-    return flag;
+bool variableDeclError(const string &name)
+{
+	bool flag = false;
+	if (st.top() == "void")
+	{
+		errorFile << "Line #" << currentToken->getLine() << ": Illegal type of void.\n";
+		flag = true;
+	}
+	st.pop();
+	if (currentScope->getVariable(name) != nullptr)
+	{
+		errorFile << "Line #" << currentToken->getLine() << ": Variable \"" << name
+		          << "\" is already defined in this scope at Line #"
+		          << currentScope->getVariable(name)->getDefinitionLine() << ".\n";
+		flag = true;
+	}
+	return flag;
 }
 
 void decl_arr()
 {
-    // TODO: arrays and variables with same name
-    int count = stoi(st.top());
-    st.pop();
-    string name = st.top();
-    st.pop();
-    if (!variableDeclError(name))
-    {
-        currentScope->addArray(name, count);
-    }
+	// TODO: arrays and variables with same name
+	int count = stoi(st.top());
+	st.pop();
+	string name = getNameOfId();
+	if (!variableDeclError(name))
+	{
+		currentScope->addArray(name, count);
+	}
 }
 
 void negate_()
@@ -120,11 +124,6 @@ void return_type_check()
 
 }
 
-void end_while_scope()
-{
-
-}
-
 void decl_while_scope()
 {
 
@@ -132,47 +131,82 @@ void decl_while_scope()
 
 void label()
 {
-
-}
-
-void end_else_scope()
-{
-
+	st.push(to_string(programIndex));
 }
 
 void decl_else_scope()
 {
-
+	currentScope = new Scope(currentToken->getLine(), programIndex, memoryAddressAllocator, false, ELSE, currentScope);
+	if (currentToken->getValue() == "{")
+	{
+        skipNormalScope = true;
+	}
 }
 
 void decl_if_scope()
 {
-
+	currentScope = new Scope(currentToken->getLine(), programIndex, memoryAddressAllocator, false, IF, currentScope);
+	if (currentToken->getValue() == "{")
+	{
+        skipNormalScope = true;
+	}
 }
 
 void decl_normal_scope()
 {
-
+	if (!skipNormalScope)
+	{
+		currentScope = new Scope(currentToken->getLine(), programIndex, memoryAddressAllocator, false, NORMAL,
+		                         currentScope);
+	}
 }
 
-void add_param_arr()
+string getNameOfId()
 {
-
+	string ret = st.top();
+	st.pop();
+	return ret;
 }
 
-void add_param_int()
+void add_param()
 {
+	string name = getNameOfId();
+	if (!variableDeclError(name))
+	{
+		currentScope->addVariable(name);
+		currentScope->addParams((currentToken->getValue() == "[") ? ARRAY : NON_ARRAY);
+	}
 
-}
-
-void error_void_param()
-{
-	errorFile << "Line #" << currentToken->getLine() << ": Illegal type of void.\n";
 }
 
 void decl_func()
 {
+	// todo: function overloading
+	string name = getNameOfId();
+	if (currentScope->getFunction(name) != nullptr)
+	{
+		errorFile << "Line #" << currentToken->getLine() << ": Function name \"" << name
+		          << "\" already exists in Line #"
+		          << currentScope->getFunction(name)->getDefinitionLine() << endl;
+		skipDirectives = true;
+		st.pop();
+		return;
+	}
+	bool hasReturnValue = st.top() == "int";
+	st.pop();
+	currentScope = currentScope->addFunction(name, hasReturnValue);
 
+}
+
+void end_skip_directives()
+{
+	skipDirectives = false;
+}
+
+void end_scope()
+{
+	currentScope->setReturnAddress(programIndex);
+	currentScope = currentScope->getContainer();
 }
 
 

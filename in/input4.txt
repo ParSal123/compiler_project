@@ -2,3 +2,13 @@ int a;
 int b;
 int c;
 int d[10];
+void g(int a, int b, int c[])
+{
+    int a;
+}
+void g(void a[], int b, void b, int c) {}
+int f(int a[], int b[], int c, int d) {
+    int e;
+    int d;
+    int f[10];
+    }

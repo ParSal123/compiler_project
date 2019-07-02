@@ -5,33 +5,33 @@ DecList -> #push TypeSpec #push id Fid_4 DecList
 
 Fid_4 -> #decl_var ;
         | [ #push num ] ; #decl_arr
-        | ( #decl_func Params ) CompoundStmt .
+        | #decl_func ( Params ) CompoundStmt #end_skip_directives .
 
 TypeSpec -> int 
            | void .
 
 Params -> #push int #push id Fid_2 ParamList 
-         | void Fvoid .
+         | #push void Fvoid .
 
-Fvoid -> #error_void_param id Fid_2 ParamList 
-        | .
+Fvoid -> #push id Fid_2 ParamList 
+        | #pop .
 
 ParamList -> , #push TypeSpec #push id Fid_2 ParamList 
               | .
 
-Fid_2 -> #add_param_int
-        | [ ] #add_param_arr .
+Fid_2 -> #add_param
+        | #add_param [ ] .
 
-CompoundStmt -> { DecList StmtList } .
+CompoundStmt -> { DecList StmtList } #end_scope .
 
 StmtList -> Stmt StmtList 
              | .
 
 Stmt -> #decl_normal_scope CompoundStmt 
-       | if ( Expr ) #decl_if_scope Stmt else #decl_else_scope Stmt #end_else_scope
-       | while #label ( Expr ) #decl_while_scope Stmt #end_while_scope
+       | if ( Expr ) #decl_if_scope Stmt #end_scope else #decl_else_scope Stmt #end_scope
+       | while #label ( Expr ) #decl_while_scope Stmt #end_scope
        | return #return_type_check Freturn #return_assignment
-       | switch ( Expr ) { #decl_switch_scope CaseStmts DefaultStmt }
+       | switch ( Expr ) { #decl_switch_scope CaseStmts DefaultStmt } #end_scope
        | continue #continue_ ;
        | break #break_ ;
        | Freturn .
