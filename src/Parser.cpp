@@ -338,6 +338,7 @@ void Parser::initDirectiveFunctions()
 		{tokenIndices["#end_while_scope"], end_while_scope},
 		{tokenIndices["#return_type_check"], return_type_check},
 		{tokenIndices["#return_assignment"], return_assignment},
+		{tokenIndices["#decl_switch_scope"], decl_switch_scope},
 		{tokenIndices["#continue"], continue_},
 		{tokenIndices["#break"], break_},
 		{tokenIndices["#pop"], pop},
@@ -349,7 +350,7 @@ void Parser::initDirectiveFunctions()
 		{tokenIndices["#add"], add},
 		{tokenIndices["#sub"], sub},
 		{tokenIndices["#mult"], mult},
-		{tokenIndices["#negate"], negate},
+		{tokenIndices["#negate"], negate_},
 
 
 

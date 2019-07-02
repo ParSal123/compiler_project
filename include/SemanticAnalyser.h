@@ -4,6 +4,7 @@
 
 #include "Commons.h"
 #include "Token.h"
+#include "Scope.h"
 
 constexpr int SIZEOF_VARIABLES = 4;
 constexpr int MEMORY_START_ADDRESS = 1;
@@ -43,7 +44,7 @@ void relop();
 void add();
 void sub();
 void mult();
-void negate();
+void negate_();
 
 #endif
 
