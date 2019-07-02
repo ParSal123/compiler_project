@@ -19,6 +19,8 @@ public:
 
 private:
 public:
+	int getAddress() const;
+
 	int getDefinitionLine() const;
 
 private:

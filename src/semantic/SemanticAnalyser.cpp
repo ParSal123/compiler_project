@@ -10,21 +10,26 @@ bool skipNormalScope = false;
 
 void push()
 {
-	st.push(currentToken->getValue());
+	string token = currentToken->getValue();
+	if (currentToken->getType() == NUM_TOKEN_ID)
+	{
+		token = "#" + token;
+	}
+	st.push(token);
 }
 
-void addCode(string command, string arg1, string arg2, string arg3, int place = programIndex)
+void addCode(const string& command, const string& arg1, const string& arg2, const string& arg3, int place)
 {
-	if (pb.capacity() <= place)
+	if (pb.size() <= place)
 	{
-		pb.resize(place);
+		pb.resize(place + 1);
 	}
 	pb[place] = to_string(place + 1) + "\t(" + command + ", " + arg1 + ", " + arg2 + ", " + arg3 + ")";
 }
 
 void decl_var()
 {
-	string name = getNameOfId();
+	string name = poll();
 	if (!variableDeclError(name))
 	{
 		currentScope->addVariable(name);
@@ -53,9 +58,9 @@ bool variableDeclError(const string &name)
 void decl_arr()
 {
 	// TODO: arrays and variables with same name
-	int count = stoi(st.top());
+	int count = stoi(st.top().substr(1));
 	st.pop();
-	string name = getNameOfId();
+	string name = poll();
 	if (!variableDeclError(name))
 	{
 		currentScope->addArray(name, count);
@@ -64,22 +69,46 @@ void decl_arr()
 
 void negate_()
 {
-
+	string top = poll();
+	top = convertToCommandFormat(top);
+	if (top[0] == '#')
+	{
+        top = "#" + to_string(-stoi(top.substr(1)));
+        st.push(top);
+	}
+	else
+	{
+		string dest = to_string(currentScope->addTemp());
+		addCode(MULT_COMMAND, "#-1", top, dest);
+		st.push(dest);
+	}
 }
 
 void mult()
 {
-
+	string s1 = convertToCommandFormat(poll());
+	string s2 = convertToCommandFormat(poll());
+	string dest = to_string(currentScope->addTemp());
+	addCode(MULT_COMMAND, s1, s2, dest);
+	st.push(dest);
 }
 
 void sub()
 {
-
+	string s1 = convertToCommandFormat(poll());
+	string s2 = convertToCommandFormat(poll());
+	string dest = to_string(currentScope->addTemp());
+	addCode(SUB_COMMAND, s2, s1, dest);
+	st.push(dest);
 }
 
 void add()
 {
-
+	string s1 = convertToCommandFormat(poll());
+	string s2 = convertToCommandFormat(poll());
+	string dest = to_string(currentScope->addTemp());
+	addCode(ADD_COMMAND, s2, s1, dest);
+	st.push(dest);
 }
 
 void relop()
@@ -94,7 +123,8 @@ void resolve_array_index()
 
 void assign()
 {
-
+	string source = convertToCommandFormat(poll());
+    addCode(ASSIGN_COMMAND, source, convertToCommandFormat(st.top()), "");
 }
 
 void func_call()
@@ -169,7 +199,7 @@ void decl_normal_scope()
 	}
 }
 
-string getNameOfId()
+string poll()
 {
 	string ret = st.top();
 	st.pop();
@@ -178,7 +208,7 @@ string getNameOfId()
 
 void add_param()
 {
-	string name = getNameOfId();
+	string name = poll();
 	if (!variableDeclError(name))
 	{
 		currentScope->addVariable(name);
@@ -190,7 +220,7 @@ void add_param()
 void decl_func()
 {
 	// todo: function overloading
-	string name = getNameOfId();
+	string name = poll();
 	if (currentScope->getFunction(name) != nullptr)
 	{
 		errorFile << "Line #" << currentToken->getLine() << ": Function name \"" << name
@@ -225,7 +255,7 @@ void save()
 
 void jp_if()
 {
-	addCode(JP_COMMAND, to_string(programIndex), "", "", stoi(st.top()));
+	addCode(JP_COMMAND, to_string(programIndex + 1), "", "", stoi(st.top()));
 	st.pop();
 }
 
@@ -233,8 +263,36 @@ void jpf_if()
 {
 	int line = stoi(st.top());
 	st.pop();
-	addCode(JP_FALSE_COMMAND, st.top(), to_string(programIndex + 1), "", line);
+	addCode(JP_FALSE_COMMAND, st.top(), to_string(programIndex + 2), "", line);
 	st.pop();
+}
+
+void printProgramBlock()
+{
+	ofstream outputProgram(OUTPUT_ADRESS);
+	for (auto &code : pb)
+	{
+		outputProgram << code << endl;
+	}
+	outputProgram.close();
+}
+
+string convertToCommandFormat(string s)
+{
+	if (isalpha(s[0]))
+	{
+		Variable *var = currentScope->findVariable(s);
+		if (var == nullptr)
+		{
+			errorFile << "Line #" << currentToken->getLine() << ": \"" << s << "\" is not defined.\n";
+			exit(0);
+		}
+		else
+		{
+			return to_string(var->getAddress());
+		}
+	}
+	return s;
 }
 
 

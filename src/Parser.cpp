@@ -330,6 +330,7 @@ void Parser::parse()
 		currentToken = lexer->getNextToken();
 		cerr << "current token is: " << tokenNames[currentToken->getType()] << endl;
 		parse(getTokenId("Program"), 1, false);
+        printProgramBlock();
 		cerr << "lanat";
 	}
 	catch (string msg)

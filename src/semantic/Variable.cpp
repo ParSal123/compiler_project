@@ -18,3 +18,8 @@ int Variable::getDefinitionLine() const
 	return definitionLine;
 }
 
+int Variable::getAddress() const
+{
+	return address;
+}
+

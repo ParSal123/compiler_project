@@ -28,7 +28,7 @@ StmtList -> Stmt StmtList
              | .
 
 Stmt -> #decl_normal_scope CompoundStmt 
-       | if ( Expr ) #save #decl_if_scope Stmt #end_scope #save #jpf_if else #decl_else_scope Stmt #end_scope #jp_if
+       | if ( Expr ) #save #decl_if_scope Stmt #end_scope #jpf_if #save else #decl_else_scope Stmt #end_scope #jp_if
        | while #label ( Expr ) #decl_while_scope Stmt #end_scope
        | return #return_type_check Freturn #return_assignment
        | switch ( Expr ) { #decl_switch_scope CaseStmts DefaultStmt } #end_scope

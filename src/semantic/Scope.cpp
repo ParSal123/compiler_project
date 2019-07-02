@@ -1,14 +1,14 @@
 
 #include "Scope.h"
 
-Variable *Scope::getVariable(string name)
+Variable *Scope::getVariable(const string &name)
 {
 	auto iter = variables.find(name);
-	if (iter == variables.end())
+	if (iter != variables.end())
 	{
-		return nullptr;
+		return iter->second;
 	}
-	return iter->second;
+	return nullptr;
 }
 
 int Scope::getStartAddress() const
@@ -31,7 +31,7 @@ void Scope::addParams(VariableType param)
 	params.push_back(param);
 }
 
-void Scope::addVariable(string name)
+void Scope::addVariable(const string &name)
 {
 	Variable *var = new Variable(memoryAddressAllocator * SIZEOF_VARIABLES, currentToken->getLine(), NON_ARRAY,
 	                             currentScope);
@@ -39,7 +39,7 @@ void Scope::addVariable(string name)
 	variables[name] = var;
 }
 
-void Scope::addArray(string name, int size)
+void Scope::addArray(const string &name, int size)
 {
 	Variable *var = new Variable(memoryAddressAllocator * SIZEOF_VARIABLES, currentToken->getLine(), ARRAY,
 	                             currentScope);
@@ -54,7 +54,7 @@ Scope::Scope(int definitionLine, int startAddress, int memoryStartAddress, bool 
 		  type(type), container(container)
 {}
 
-Scope *Scope::getFunction(string name)
+Scope *Scope::getFunction(const string &name)
 {
 	auto iter = functions.find(name);
 	if (iter == functions.end())
@@ -69,7 +69,7 @@ int Scope::getDefinitionLine() const
 	return definitionLine;
 }
 
-Scope *Scope::addFunction(string name, bool hasReturnValue)
+Scope *Scope::addFunction(const string &name, bool hasReturnValue)
 {
 	Scope *func = new Scope(currentToken->getLine(), programIndex, memoryAddressAllocator, hasReturnValue, FUNCTION,
 	                        currentScope);
@@ -80,5 +80,25 @@ Scope *Scope::addFunction(string name, bool hasReturnValue)
 void Scope::setReturnAddress(int returnAddress)
 {
 	Scope::returnAddress = returnAddress;
+}
+
+int Scope::addTemp()
+{
+	return SIZEOF_VARIABLES * memoryAddressAllocator++;
+}
+
+Variable *Scope::findVariable(const string &name)
+{
+	Scope *current = this;
+	while (current != nullptr)
+	{
+		auto iter = current->variables.find(name);
+		if (iter != current->variables.end())
+		{
+			return iter->second;
+		}
+		current = current->container;
+	}
+	return nullptr;
 }
 

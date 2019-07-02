@@ -23,25 +23,28 @@ public:
 
 	void addParams(VariableType param);
 
-	Variable *getVariable(string name);
+	Variable *getVariable(const string& name);
 
+	Variable *findVariable(const string& name);
 
 	int getStartAddress() const;
 
 	int getDefinitionLine() const;
 
+	int addTemp();
+
 	bool isHasReturnValue() const;
 
 	Scope *getContainer() const;
 
-	void addVariable(string name);
+	void addVariable(const string& name);
 
-	void addArray(string name, int size);
+	void addArray(const string& name, int size);
 
-	Scope *getFunction(string name);
+	Scope *getFunction(const string& name);
 
 
-	Scope* addFunction(string name, bool hasReturnValue);
+	Scope* addFunction(const string& name, bool hasReturnValue);
 
 private:
 	int definitionLine;
