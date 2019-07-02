@@ -9,7 +9,35 @@ Variable* Scope::getVariable(string name)
     return iter->second;
 }
 
+int Scope::getStartAddress() const
+{
+	return startAddress;
+}
+
+bool Scope::isHasReturnValue() const
+{
+	return hasReturnValue;
+}
+
+Scope *Scope::getContainer() const
+{
+	return container;
+}
+
+void Scope::addParams(VariableType param)
+{
+
+}
+
 void Scope::addVariable(string name)
 {
-    Variable* var = new Variable(
+	Variable *var = new Variable(memoryAddressAllocator, NON_ARRAY, currentScope);
+	variables[name] = var;
+}
+
+Scope::Scope(int startAddress, bool hasReturnValue, ScopeType type, Scope *container) : startAddress(startAddress),
+																						hasReturnValue(hasReturnValue),
+																						type(type), container(container)
+{}
+
 

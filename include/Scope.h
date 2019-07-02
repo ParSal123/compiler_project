@@ -3,24 +3,30 @@
 #define COMPILER_PROJECT_SCOPE_H
 
 #include "Commons.h"
+#include "Variable.h"
+#include "SemanticAnalyser.h"
+
+class Variable;
+enum VariableType : int;
 
 enum ScopeType { NORMAL, IF, ELSE, WHILE, SWITCH, CASE, FUNCTION };
 
 class Scope
 {
 public:
-    Scope(int startAddress, bool hasReturnValue, ScopeType type, Scope *container):
-        startAddress(startAddress), hasReturnValue(hasReturnValue),
-        container(container), type(type)
-    {}
-    int getStartAddress();
-    int getReturnAddress();
-    void setReturnAddress(int returnAddress);
-    bool hasReturnValue();
-    Scope* getContainer();
-    void addParams(VariableType param);
+	Scope(int startAddress, bool hasReturnValue, ScopeType type, Scope *container);
+
+	void addParams(VariableType param);
     Variable* getVariable(string name);
-    void addVariable(string name);
+
+
+	int getStartAddress() const;
+
+	bool isHasReturnValue() const;
+
+	Scope *getContainer() const;
+
+	void addVariable(string name);
 
 private:
     int startAddress, returnAddress;

@@ -5,11 +5,13 @@
 #ifndef COMPILER_PROJECT_PARSER_H
 #define COMPILER_PROJECT_PARSER_H
 
+#include "SemanticAnalyser.h"
 #include "Lexer.h"
+#include "Scope.h"
 
 extern Lexer *lexer;
-Token *currentToken;
-Scope *currentScope;
+extern Token *currentToken;
+extern Scope *currentScope;
 
 class Parser
 {

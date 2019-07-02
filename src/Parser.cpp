@@ -3,10 +3,12 @@
 //
 
 #include "Parser.h"
-#include "SemanticAnalyser.h"
 
 TokenToIndicesMap Parser::tokenIndices;
 IndicesToTokenMap Parser::tokenNames;
+
+Token *currentToken;
+Scope *currentScope;
 
 void Parser::print()
 {
@@ -324,6 +326,7 @@ void Parser::initDirectiveFunctions()
 	directiveFunctions = {
 
 		{tokenIndices["#push"], push},
+		{tokenIndices["#decl_func"], decl_func},
 		{tokenIndices["#decl_var"], decl_var},
 		{tokenIndices["#decl_arr"], decl_arr},
 		{tokenIndices["#error_void_param"], error_void_param},
@@ -351,16 +354,5 @@ void Parser::initDirectiveFunctions()
 		{tokenIndices["#sub"], sub},
 		{tokenIndices["#mult"], mult},
 		{tokenIndices["#negate"], negate_},
-
-
-
-
-
-
-
-
-
-
-
 	};
 }

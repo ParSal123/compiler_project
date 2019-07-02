@@ -5,18 +5,25 @@
 #include "Commons.h"
 #include "Scope.h"
 
-enum VariableType { NON_ARRAY, ARRAY };
 
-class Variable
-{
+enum VariableType : int {
+	NON_ARRAY, ARRAY
+};
+
+class Scope;
+
+class Variable {
 public:
-    Variable(int address, VariableType type, Scope *container) : address(address), type(type),
-        container(container)
-    Scope* getContainer();
+	Variable(int address, VariableType type, Scope *container);
+
 private:
-    int address;
-    VariableType type;
-    Scope *container;
+	int address;
+	VariableType type;
+public:
+	Scope *getContainer() const;
+
+private:
+	Scope *container;
 };
 
 #endif

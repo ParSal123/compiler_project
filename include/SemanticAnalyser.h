@@ -12,10 +12,10 @@ constexpr int RETURN_ADDRESS = 0;
 constexpr int STACK_START_ADDRESS = 10000;
 
 
-int memoryAddressAllocator = MEMORY_START_ADDRESS;
+extern int memoryAddressAllocator;
 extern Token *currentToken;
 extern Scope *currentScope;
-stack<string> st;
+extern stack<string> st;
 
 void push();
 void decl_var();
