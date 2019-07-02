@@ -8,6 +8,8 @@
 #include "Lexer.h"
 
 extern Lexer *lexer;
+Token *currentToken;
+Scope *currentScope;
 
 class Parser
 {
@@ -34,7 +36,6 @@ private:
 	NonTerminalSet nonTerminal;
     ofstream parseTree;
 	DiagramList diagrams;
-	Token *currentToken;
 
     ~Parser();
 	Token* getNextToken();

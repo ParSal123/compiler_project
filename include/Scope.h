@@ -9,20 +9,23 @@ enum ScopeType { NORMAL, IF, ELSE, WHILE, SWITCH, CASE, FUNCTION };
 class Scope
 {
 public:
-    Scope(int startAddress, int returnAddress, bool hasReturnValue, ScopeType type, Scope *container):
-        startAddress(startAddress), returnAddress(returnAddress), hasReturnValue(hasReturnValue),
+    Scope(int startAddress, bool hasReturnValue, ScopeType type, Scope *container):
+        startAddress(startAddress), hasReturnValue(hasReturnValue),
         container(container), type(type)
     {}
     int getStartAddress();
     int getReturnAddress();
+    void setReturnAddress(int returnAddress);
     bool hasReturnValue();
     Scope* getContainer();
-    void addArguments(VariableType argument);
+    void addParams(VariableType param);
+    Variable* getVariable(string name);
+    void addVariable(string name);
 
 private:
     int startAddress, returnAddress;
     bool hasReturnValue; // there's only one type of return value and that's int
-    vector<VariableType> arguments;
+    vector<VariableType> params;
     unordered_map<string, Scope*> functions;
     unordered_map<string, Variable*> variables;
     ScopeType type;

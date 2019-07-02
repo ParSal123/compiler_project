@@ -10,6 +10,8 @@ enum VariableType { NON_ARRAY, ARRAY };
 class Variable
 {
 public:
+    Variable(int address, VariableType type, Scope *container) : address(address), type(type),
+        container(container)
     Scope* getContainer();
 private:
     int address;

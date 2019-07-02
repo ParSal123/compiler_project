@@ -32,6 +32,12 @@ void Parser::print()
 		cout << i.second << " " << i.first << endl;
 }
 
+Parser::~Parser()
+{
+    parseTree.flush();
+    parseTree.close();
+}
+
 Parser::Parser()
 {
 	parseTree.open(PARSE_TREE_ADDRESS);
@@ -138,6 +144,7 @@ void Parser::parse(int dfa, int level, bool canParseEps)
 	for (auto &path : diagrams[dfa])
 	{
 		int firstToken = path[0];
+        // todo: while directive -> gonext()
         cerr << "first token of the path is: " << tokenNames[firstToken] << endl;
 		if ((!isNonTerminal(firstToken) && firstToken == tokenId)
 			|| (firstToken == EPSILON_TOKEN_ID && canParseEps)
