@@ -10,6 +10,16 @@ constexpr int SIZEOF_VARIABLES = 4;
 constexpr int MEMORY_START_ADDRESS = 1;
 constexpr int RETURN_ADDRESS = 0;
 constexpr int STACK_START_ADDRESS = 10000;
+constexpr string ASSIGN_COMMAND = "ASSIGN";
+constexpr string ADD_COMMAND = "ADD";
+constexpr string SUB_COMMAND = "SUB";
+constexpr string EQUAL_COMMAND = "EQ";
+constexpr string JP_FALSE_COMMAND = "JPF";
+constexpr string JP_COMMAND = "JP";
+constexpr string LESS_THAN_COMMAND = "LT";
+constexpr string MULT_COMMAND = "MULT";
+constexpr string NOT_COMMAND = "NOT";
+constexpr string PRINT_COMMAND = "PRINT";
 
 class Scope;
 
@@ -22,6 +32,7 @@ extern stack<string> st;
 extern bool skipDirectives;
 extern bool skipNormalScope;
 
+void addCode(string command, string arg1, string arg2, string arg3, int place = programIndex);
 string getNameOfId();
 bool variableDeclError(const string& name);
 void end_skip_directives();
@@ -50,6 +61,10 @@ void add();
 void sub();
 void mult();
 void negate_();
+void save();
+void jpf_if();
+void jp_if();
+
 
 #endif
 

@@ -13,6 +13,14 @@ void push()
 	st.push(currentToken->getValue());
 }
 
+void addCode(string command, string arg1, string arg2, string arg3, int place = programIndex)
+{
+	if (pb.capacity() <= place)
+	{
+		pb.resize(place);
+	}
+	pb[place] = to_string(place + 1) + "\t(" + command + ", " + arg1 + ", " + arg2 + ", " + arg3 + ")";
+}
 
 void decl_var()
 {
@@ -207,6 +215,26 @@ void end_scope()
 {
 	currentScope->setReturnAddress(programIndex);
 	currentScope = currentScope->getContainer();
+}
+
+void save()
+{
+	st.push(to_string(programIndex));
+	programIndex++;
+}
+
+void jp_if()
+{
+	addCode(JP_COMMAND, to_string(programIndex), "", "", stoi(st.top()));
+	st.pop();
+}
+
+void jpf_if()
+{
+	int line = stoi(st.top());
+	st.pop();
+	addCode(JP_FALSE_COMMAND, st.top(), to_string(programIndex + 1), "", line);
+	st.pop();
 }
 
 

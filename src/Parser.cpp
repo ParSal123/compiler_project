@@ -392,6 +392,9 @@ void Parser::initDirectiveFunctions()
 			{tokenIndices["#break"],               break_},
 			{tokenIndices["#pop"],                 pop},
 			{tokenIndices["#end_skip_directives"], end_skip_directives},
+			{tokenIndices["#save"],                save},
+			{tokenIndices["#jp_if"],               jp_if},
+			{tokenIndices["#jpf_if"],              jpf_if},
 			//todo : add case directives
 			{tokenIndices["#func_call"],           func_call},
 			{tokenIndices["#assign"],              assign},
