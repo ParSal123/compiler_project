@@ -24,7 +24,7 @@ void error_void_param();
 void add_param_int();
 void add_param_arr();
 void decl_normal_scope();
-void decl_if_scope(); 
+void decl_if_scope();
 void decl_else_scope();
 void end_else_scope();
 void label();
@@ -42,6 +42,7 @@ void resolve_array_index();
 void relop();
 void add();
 void sub();
+void mult();
 void negate();
 
 #endif

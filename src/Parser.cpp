@@ -93,6 +93,8 @@ Parser::Parser()
 				int id = tokenIndices[input];
 				if (isupper(input[0]))
 					nonTerminal.insert(id);
+				if (input[0] == '#')
+					directiveSet.insert(id);
 				currentPath->push_back(id);
 				numberOfTokensInRule++;
 			}
@@ -103,6 +105,7 @@ Parser::Parser()
 		tokenNames[token.second] = token.first;
 	}
 	initFirstFollow();
+	initDirectiveFunctions();
 }
 
 void Parser::initFirstFollow()
@@ -143,8 +146,9 @@ void Parser::parse(int dfa, int level, bool canParseEps)
 	int tokenId = currentToken->getType();
 	for (auto &path : diagrams[dfa])
 	{
-		int firstToken = path[0];
-        // todo: while directive -> gonext()
+		int firstToken, i = 0;
+		for (firstToken = path[i]; isDirective(firstToken); firstToken = path[++i])
+			;
         cerr << "first token of the path is: " << tokenNames[firstToken] << endl;
 		if ((!isNonTerminal(firstToken) && firstToken == tokenId)
 			|| (firstToken == EPSILON_TOKEN_ID && canParseEps)
@@ -180,6 +184,10 @@ void Parser::parse(int dfa, int level, bool canParseEps)
 						printError(missingTerminal(id));
 						printTree(id, level, true);
 					}
+				}
+				else if (isDirective(tokenId))
+				{
+					(directiveFunctions[tokenId])();
 				}
 				else
 				{
@@ -219,6 +227,11 @@ void Parser::parse(int dfa, int level, bool canParseEps)
 			return;
 		}
 	}
+}
+
+bool Parser::isDirective(TokenId token) const
+{
+	return directiveSet.find(token) != directiveSet.end();
 }
 
 Token* Parser::getNextToken()
@@ -304,4 +317,49 @@ string Parser::unexpectedEndOfFile()
 string Parser::malformedInput()
 {
 	return to_string(currentToken->getLine()) + " - Syntax Error! Malformed Input";
+}
+
+void Parser::initDirectiveFunctions()
+{
+	directiveFunctions = {
+
+		{tokenIndices["#push"], push},
+		{tokenIndices["#decl_var"], decl_var},
+		{tokenIndices["#decl_arr"], decl_arr},
+		{tokenIndices["#error_void_param"], error_void_param},
+		{tokenIndices["#add_param_int"], add_param_int},
+		{tokenIndices["#add_param_arr"], add_param_arr},
+		{tokenIndices["#decl_normal_scope"], decl_normal_scope},
+		{tokenIndices["#decl_if_scope"], decl_if_scope},
+		{tokenIndices["#decl_else_scope"], decl_else_scope},
+		{tokenIndices["#end_else_scope"], end_else_scope},
+		{tokenIndices["#label"], label},
+		{tokenIndices["#decl_while_scope"], decl_while_scope},
+		{tokenIndices["#end_while_scope"], end_while_scope},
+		{tokenIndices["#return_type_check"], return_type_check},
+		{tokenIndices["#return_assignment"], return_assignment},
+		{tokenIndices["#continue"], continue_},
+		{tokenIndices["#break"], break_},
+		{tokenIndices["#pop"], pop},
+		//todo : add case directives
+		{tokenIndices["#func_call"], func_call},
+		{tokenIndices["#assign"], assign},
+		{tokenIndices["#resolve_array_index"], resolve_array_index},
+		{tokenIndices["#relop"], relop},
+		{tokenIndices["#add"], add},
+		{tokenIndices["#sub"], sub},
+		{tokenIndices["#mult"], mult},
+		{tokenIndices["#negate"], negate},
+
+
+
+
+
+
+
+
+
+
+
+	};
 }
