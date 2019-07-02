@@ -7,23 +7,21 @@
 
 
 enum VariableType : int {
-	NON_ARRAY, ARRAY
+    NON_ARRAY, ARRAY
 };
 
 class Scope;
 
 class Variable {
 public:
-	Variable(int address, VariableType type, Scope *container);
+    Variable(int address, VariableType type, Scope *container);
+    Scope *getContainer() const;
 
 private:
-	int address;
-	VariableType type;
-public:
-	Scope *getContainer() const;
+    int address;
+    VariableType type;
+    Scope *container;
 
-private:
-	Scope *container;
 };
 
 #endif

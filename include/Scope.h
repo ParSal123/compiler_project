@@ -27,6 +27,7 @@ public:
 	Scope *getContainer() const;
 
 	void addVariable(string name);
+	void addArray(string name, int size);
 
 private:
     int startAddress, returnAddress;

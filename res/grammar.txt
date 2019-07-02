@@ -3,7 +3,7 @@ Program -> DecList eof .
 DecList -> #push TypeSpec #push id Fid_4 DecList 
             | .
 
-Fid_4 -> ; #decl_var
+Fid_4 -> #decl_var ;
         | [ #push num ] ; #decl_arr
         | ( #decl_func Params ) CompoundStmt .
 
@@ -32,8 +32,8 @@ Stmt -> #decl_normal_scope CompoundStmt
        | while #label ( Expr ) #decl_while_scope Stmt #end_while_scope
        | return #return_type_check Freturn #return_assignment
        | switch ( Expr ) { #decl_switch_scope CaseStmts DefaultStmt }
-       | continue #continue ;
-       | break #break ;
+       | continue #continue_ ;
+       | break #break_ ;
        | Freturn .
 
 Freturn -> ; 

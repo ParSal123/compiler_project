@@ -8,7 +8,7 @@ TokenToIndicesMap Parser::tokenIndices;
 IndicesToTokenMap Parser::tokenNames;
 
 Token *currentToken;
-Scope *currentScope;
+Scope *currentScope = new Scope(1, false, NORMAL, nullptr);
 
 void Parser::print()
 {
@@ -96,8 +96,10 @@ Parser::Parser()
 				if (isupper(input[0]))
 					nonTerminal.insert(id);
 				if (input[0] == '#')
+                {
 					directiveSet.insert(id);
-				currentPath->push_back(id);
+                }
+                currentPath->push_back(id);
 				numberOfTokensInRule++;
 			}
 		}
@@ -106,7 +108,11 @@ Parser::Parser()
 	{
 		tokenNames[token.second] = token.first;
 	}
-	cerr << "balaye initfirstfollow\n";
+    for (auto &name : directiveSet)
+    {
+        cout << "Directive : ";
+        cout << tokenNames[name] << endl;
+    }
 	initFirstFollow();
 	initDirectiveFunctions();
 }
@@ -188,9 +194,9 @@ void Parser::parse(int dfa, int level, bool canParseEps)
 						printTree(id, level, true);
 					}
 				}
-				else if (isDirective(tokenId))
+				else if (isDirective(id))
 				{
-					(directiveFunctions[tokenId])();
+					directiveFunctions[id]();
 				}
 				else
 				{
@@ -283,6 +289,7 @@ void Parser::parse()
 	    currentToken = lexer->getNextToken();
         cerr << "current token is: " << tokenNames[currentToken->getType()] << endl;
 		parse(getTokenId("Program"), 1, false);
+		cerr << "lanat";
 	}
 	catch (string msg)
 	{
