@@ -11,6 +11,7 @@ constexpr int MEMORY_START_ADDRESS = 1;
 constexpr int RETURN_ADDRESS = 0;
 constexpr int STACK_START_ADDRESS = 10000;
 
+class Scope;
 
 extern int memoryAddressAllocator;
 extern Token *currentToken;

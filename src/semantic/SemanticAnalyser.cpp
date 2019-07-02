@@ -148,7 +148,7 @@ void add_param_int()
 
 void error_void_param()
 {
-
+	errorFile << "Line #" << currentToken->getLine() << ": Illegal type of void.\n";
 }
 
 void decl_func()

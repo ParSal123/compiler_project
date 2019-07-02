@@ -32,6 +32,7 @@ void Scope::addParams(VariableType param)
 void Scope::addVariable(string name)
 {
 	Variable *var = new Variable(memoryAddressAllocator, NON_ARRAY, currentScope);
+	memoryAddressAllocator += SIZEOF_VARIABLES;
 	variables[name] = var;
 }
 

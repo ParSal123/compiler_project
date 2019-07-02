@@ -42,13 +42,13 @@ Parser::~Parser()
 
 Parser::Parser()
 {
+	cerr << "parser init\n";
 	parseTree.open(PARSE_TREE_ADDRESS);
 	ifstream fin(GRAMMAR_ADDRESS);
 	int numberOfTokensInRule = 0;
 	TransitionDiagram *currentDiagram = nullptr;
 	DiagramPath *currentPath = nullptr;
 	bool startOfRule = true;
-	tokenIndices.clear();
 	tokenIndices["error"] = ERROR_TOKEN_ID;
 	tokenIndices["eps"] = EPSILON_TOKEN_ID;
 	tokenIndices["num"] = NUM_TOKEN_ID;
@@ -56,7 +56,7 @@ Parser::Parser()
 	string input;
 	while (fin >> input)
 	{
-
+		cerr << input << endl;
 		if (startOfRule)
 		{
 			if (tokenIndices.find(input) == tokenIndices.end())
@@ -106,6 +106,7 @@ Parser::Parser()
 	{
 		tokenNames[token.second] = token.first;
 	}
+	cerr << "balaye initfirstfollow\n";
 	initFirstFollow();
 	initDirectiveFunctions();
 }

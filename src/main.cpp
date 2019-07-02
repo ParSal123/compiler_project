@@ -8,6 +8,7 @@ ofstream errorFile(ERRORS_ADDRESS);
 int main()
 {
 	//parser->print();
+	cerr << "salam\n";
 	parser->parse();
     errorFile.close();
 	return 0;
