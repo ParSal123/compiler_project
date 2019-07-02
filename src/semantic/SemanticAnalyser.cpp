@@ -11,6 +11,7 @@ void push()
 	st.push(currentToken->getValue());
 }
 
+
 void decl_var()
 {
 	string name = st.top();
