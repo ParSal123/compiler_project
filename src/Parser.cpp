@@ -162,7 +162,7 @@ void Parser::parse(int dfa, int level, bool canParseEps)
 			for (TokenId id : path)
 			{
                 cerr << "level: " << level << " and expected token is: " << tokenNames[id] << endl;
-				if (!isNonTerminal(id))
+				if (!isNonTerminal(id) && !isDirective(id))
 				{
 					if (id == tokenId)
 					{
