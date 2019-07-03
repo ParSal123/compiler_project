@@ -283,7 +283,6 @@ bool Parser::isDirective(TokenId token) const
 Token *Parser::getNextToken()
 {
 	auto ret = lexer->getNextToken();
-	skipNormalScope = false;
 	if (ret != nullptr && ret->getType() == ERROR_TOKEN_ID)
 	{
 		return getNextToken();
@@ -323,14 +322,15 @@ bool Parser::isNonTerminal(int token)
 }
 
 void Parser::parse()
+
 {
+	currentScope->setReturnAddress(currentScope->addTemp());
 	parseTree << "Program" << endl;
 	try
 	{
 		currentToken = lexer->getNextToken();
 		cerr << "current token is: " << tokenNames[currentToken->getType()] << endl;
 		parse(getTokenId("Program"), 1, false);
-        printProgramBlock();
 		cerr << "lanat";
 	}
 	catch (string msg)
@@ -389,8 +389,9 @@ void Parser::initDirectiveFunctions()
 			{tokenIndices["#return_assignment"],   return_assignment},
 			{tokenIndices["#decl_switch_scope"],   decl_switch_scope},
 			{tokenIndices["#end_scope"],           end_scope},
-			{tokenIndices["#continue"],            continue_},
-			{tokenIndices["#break"],               break_},
+			{tokenIndices["#end_scope_while"],     end_scope_while},
+			{tokenIndices["#continue_"],            continue_},
+			{tokenIndices["#break_"],               break_},
 			{tokenIndices["#pop"],                 pop},
 			{tokenIndices["#end_skip_directives"], end_skip_directives},
 			{tokenIndices["#save"],                save},
@@ -405,5 +406,8 @@ void Parser::initDirectiveFunctions()
 			{tokenIndices["#sub"],                 sub},
 			{tokenIndices["#mult"],                mult},
 			{tokenIndices["#negate"],              negate_},
-	};
+			{tokenIndices["#while_"],              while_},
+			{tokenIndices["#jmp_case"],            jmp_case},
+			{tokenIndices["#eq_case"],             eq_case},
+			{tokenIndices["#two_dummies"],         two_dummies},};
 }

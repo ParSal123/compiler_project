@@ -41,6 +41,7 @@ void end_skip_directives();
 void push();
 void decl_var();
 void end_scope();
+void end_scope_while();
 void decl_arr();
 void decl_func();
 void add_param();
@@ -66,6 +67,10 @@ void negate_();
 void save();
 void jpf_if();
 void jp_if();
+void while_();
+void eq_case();
+void jmp_case();
+void two_dummies();
 
 
 #endif

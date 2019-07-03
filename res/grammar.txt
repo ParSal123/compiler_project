@@ -28,8 +28,8 @@ StmtList -> Stmt StmtList
              | .
 
 Stmt -> #decl_normal_scope CompoundStmt 
-       | if ( Expr ) #save #decl_if_scope Stmt #end_scope #jpf_if #save else #decl_else_scope Stmt #end_scope #jp_if
-       | while #label ( Expr ) #decl_while_scope Stmt #end_scope
+       | if ( Expr ) #save #decl_if_scope Stmt #end_scope_while #jpf_if #save else #decl_else_scope Stmt #end_scope_while #jp_if
+       | while #label ( Expr ) #decl_while_scope Stmt #while_ #end_scope_while
        | return #return_type_check Freturn #return_assignment
        | switch ( Expr ) { #decl_switch_scope CaseStmts DefaultStmt } #end_scope
        | continue #continue_ ;
@@ -39,10 +39,10 @@ Stmt -> #decl_normal_scope CompoundStmt
 Freturn -> ; 
           | Expr ; #pop .
 
-CaseStmts -> CaseStmt CaseStmts 
-              | .
+CaseStmts -> CaseStmt #jmp_case CaseStmts 
+              | #two_dummies .
 
-CaseStmt -> case num : StmtList .
+CaseStmt -> case #push num #eq_case #save : StmtList .
 
 DefaultStmt -> default : StmtList 
               | .
@@ -86,10 +86,10 @@ Factor -> ( Expr )
          | #push num .
 
 Fid_3 -> Fid 
-        | #push ( Args ) #func_call .
+        | #func_call ( Args ) .
 
-Args -> Expr ArgList_1 
+Args -> Expr #assign_func ArgList_1 
        | .
 
-ArgList_1 -> , Expr ArgList_1 
+ArgList_1 -> , Expr #assign_func ArgList_1 
             | .

@@ -1,19 +1,7 @@
+
 int a;
-int b;
-int c;
-int d[10];
-void g(int a, int b, int c[])
+void main(void)
 {
-    int d;
-    d = 7;
-    a = 8 * 9 + 2 - 1 * 70;
-    if (a - d * 10)
-        b = a * a + d - 3;
-    else
-        b = 0;
+a = 5;
 }
-//void g(void a[], int b, void b, int c) {}
-int f(int a[], int b[], int c, int d) {
-    int e;
-    int f[10];
-    }
+

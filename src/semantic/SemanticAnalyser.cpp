@@ -113,12 +113,21 @@ void add()
 
 void relop()
 {
-
+	string second = convertToCommandFormat(poll()), op = poll(), first = convertToCommandFormat(poll());
+	string dest = to_string(currentScope->addTemp());
+	addCode((op == "==") ? EQUAL_COMMAND : LESS_THAN_COMMAND, first, second, dest);
+	st.push(dest);
 }
 
 void resolve_array_index()
 {
-
+	st.push("#4");
+	mult();
+	string first = poll(), second = "#" + convertToCommandFormat(poll());
+	st.push(first);
+	st.push(second);
+	add();
+	st.push("@" + poll());
 }
 
 void assign()
@@ -139,17 +148,33 @@ void pop()
 
 void break_()
 {
-
+	Scope *nearestWhileOrSwitch = currentScope->getBreak();
+	if (nearestWhileOrSwitch != nullptr)
+		addCode(JP_COMMAND, "@"+to_string(nearestWhileOrSwitch->getReturnAddress()), "", "");
+	else
+	{
+		errorFile << "Line #" << currentToken->getLine() << "No \'while or switch\' found for \'break\'.\n";
+		exit(0);
+	}
 }
-
 void continue_()
 {
-
+	Scope *nearestWhile = currentScope->getContinue();
+	if (nearestWhile != nullptr)
+	{
+		addCode(JP_COMMAND, to_string(nearestWhile->getStartAddress()), "", "");
+	}
+	else
+	{
+		errorFile << "Line #" << currentToken->getLine() << "No \'while\' found for \'continue\'.\n";
+		exit(0);
+	}
 }
 
 void decl_switch_scope()
 {
-
+	currentScope = new Scope(currentToken->getLine(), programIndex, memoryAddressAllocator, false, SWITCH, currentScope);
+	currentScope->setReturnAddress(currentScope->addTemp());
 }
 
 void return_assignment()
@@ -164,12 +189,18 @@ void return_type_check()
 
 void decl_while_scope()
 {
-
+	save();
+	currentScope = new Scope(currentToken->getLine(), programIndex, memoryAddressAllocator, false, WHILE, currentScope);
+	if (currentToken->getValue() == "{")
+	{
+		skipNormalScope = true;
+	}
+	currentScope->setReturnAddress(currentScope->addTemp());
 }
 
 void label()
 {
-	st.push(to_string(programIndex));
+	st.push(to_string(programIndex + 1));
 }
 
 void decl_else_scope()
@@ -197,6 +228,8 @@ void decl_normal_scope()
 		currentScope = new Scope(currentToken->getLine(), programIndex, memoryAddressAllocator, false, NORMAL,
 		                         currentScope);
 	}
+
+	currentScope->setReturnAddress(currentScope->addTemp());
 }
 
 string poll()
@@ -233,7 +266,7 @@ void decl_func()
 	bool hasReturnValue = st.top() == "int";
 	st.pop();
 	currentScope = currentScope->addFunction(name, hasReturnValue);
-
+	currentScope->setReturnAddress(currentScope->addTemp());
 }
 
 void end_skip_directives()
@@ -243,8 +276,16 @@ void end_skip_directives()
 
 void end_scope()
 {
-	currentScope->setReturnAddress(programIndex);
-	currentScope = currentScope->getContainer();
+	if(currentScope->getType() == WHILE || currentScope->getType() == IF || currentScope->getType() == ELSE  ) return;
+	if (skipNormalScope)
+	{
+			skipNormalScope = false;
+	}
+	else
+	{
+		addCode(ASSIGN_COMMAND, "#" + to_string(programIndex + 1), "@" + to_string(currentScope->getReturnAddress()),"");
+		currentScope = currentScope->getContainer();
+	}
 }
 
 void save()
@@ -295,4 +336,44 @@ string convertToCommandFormat(string s)
 	return s;
 }
 
+void while_()
+{
+	string saved = poll(), expr = poll(), labeled = poll();
+	addCode(JP_COMMAND, labeled, "", "");
+	addCode(JP_FALSE_COMMAND, convertToCommandFormat(expr), to_string(programIndex + 1), "", stoi(saved));
+}
+
+void end_scope_while()
+{
+	if (skipNormalScope)
+	{
+			skipNormalScope = false;
+	}
+	else
+	{
+		addCode(ASSIGN_COMMAND, "#" + to_string(programIndex + 1), "@" + to_string(currentScope->getReturnAddress()),"");
+		currentScope = currentScope->getContainer();
+	}
+}
+
+void eq_case()
+{
+	string dest = to_string(currentScope->addTemp());
+	string first = poll(), second = convertToCommandFormat(st.top());
+	addCode(EQUAL_COMMAND, first, second, dest);
+	st.push(dest);
+}
+
+void jmp_case()
+{
+	string saved = poll();
+	addCode(JP_FALSE_COMMAND, poll(), to_string(programIndex + 1), "", stoi(saved));
+	addCode(JP_COMMAND, to_string(programIndex + 4), "" , "");
+}
+
+void two_dummies()
+{
+	programIndex +=3;
+	pop();
+}
 

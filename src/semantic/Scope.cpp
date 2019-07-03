@@ -11,6 +11,26 @@ Variable *Scope::getVariable(const string &name)
 	return nullptr;
 }
 
+Scope * Scope::getBreak()
+{
+	Scope *current = currentScope;
+	while(current != nullptr && current->getType() != FUNCTION)
+	{
+		if (current->getType() == WHILE || current->getType() == SWITCH)
+			return current;
+	}
+	return nullptr;
+}
+Scope * Scope::getContinue()
+{
+	Scope *current = currentScope;
+	while(current != nullptr && current->getType() != FUNCTION)
+	{
+		if (current->getType() == WHILE)
+			return current;
+	}
+	return nullptr;
+}
 int Scope::getStartAddress() const
 {
 	return startAddress;
@@ -100,5 +120,20 @@ Variable *Scope::findVariable(const string &name)
 		current = current->container;
 	}
 	return nullptr;
+}
+
+ScopeType Scope::getType() const
+{
+	return type;
+}
+
+int Scope::getReturnAddress() const
+{
+	return returnAddress;
+}
+
+const vector<VariableType> &Scope::getParams() const
+{
+	return params;
 }
 
