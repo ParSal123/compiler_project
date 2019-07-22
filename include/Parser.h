@@ -5,9 +5,13 @@
 #ifndef COMPILER_PROJECT_PARSER_H
 #define COMPILER_PROJECT_PARSER_H
 
+#include "SemanticAnalyser.h"
 #include "Lexer.h"
+#include "Scope.h"
 
 extern Lexer *lexer;
+extern Token *currentToken;
+extern Scope *currentScope;
 
 class Parser
 {
@@ -25,16 +29,18 @@ private:
 	typedef vector<TokenId> DiagramPath;
 	typedef vector<DiagramPath> TransitionDiagram;
 	typedef unordered_map<TokenId, TransitionDiagram> DiagramList;
-	typedef unordered_set<TokenId> NonTerminalSet;
+	typedef unordered_set<TokenId> NonTerminalSet, DirectiveSet;
 	typedef unordered_set<TokenId> FirstFollowSet;
 	typedef unordered_map<TokenId, FirstFollowSet> FirstFollowMap;
+	typedef unordered_map<TokenId, void(*)()> TokenToFunctionMap;
 
 	int numberOfTokens = 4;
 	FirstFollowMap first, follow;
 	NonTerminalSet nonTerminal;
+	DirectiveSet directiveSet;
+	TokenToFunctionMap directiveFunctions;
     ofstream parseTree;
 	DiagramList diagrams;
-	Token *currentToken;
 
     ~Parser();
 	Token* getNextToken();
@@ -51,6 +57,9 @@ private:
 	string unexpectedEndOfFile();
 	string malformedInput();
 
+	bool isDirective(TokenId token) const;
+
+	void initDirectiveFunctions();
 };
 
 #endif //COMPILER_PROJECT_PARSER_H

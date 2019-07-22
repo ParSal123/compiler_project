@@ -13,8 +13,9 @@ typedef int TokenId;
 typedef unordered_map<string, TokenId> TokenToIndicesMap;
 typedef unordered_map<TokenId, string> IndicesToTokenMap;
 
+const string OUTPUT_ADRESS = "../out/Tester/output.txt";
 const string LEXER_OUT_ADDRESS = "../out/lexer_output.txt";
-const string PROGRAM_ADDRESS = "../in/input2.txt";
+const string PROGRAM_ADDRESS = "../in/input4.txt";
 const string ERRORS_ADDRESS = "../out/errors.txt";
 const string PARSE_TREE_ADDRESS = "../out/parseTree.txt";
 const string GRAMMAR_ADDRESS = "../res/grammar.txt";

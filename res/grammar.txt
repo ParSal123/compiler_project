@@ -1,95 +1,95 @@
 Program -> DecList eof .
 
-DecList -> TypeSpec id Fid_4 DecList 
+DecList -> #push TypeSpec #push id Fid_4 DecList 
             | .
 
-Fid_4 -> ;
-        | [ num ] ;
-        | ( Params ) CompoundStmt .
+Fid_4 -> #decl_var ;
+        | [ #push num ] ; #decl_arr
+        | #decl_func ( Params ) CompoundStmt #end_skip_directives .
 
 TypeSpec -> int 
            | void .
 
-Params -> int id Fid_2 ParamList 
-         | void Fvoid .
+Params -> #push int #push id Fid_2 ParamList 
+         | #push void Fvoid .
 
-Fvoid -> id Fid_2 ParamList 
-        | .
+Fvoid -> #push id Fid_2 ParamList 
+        | #pop .
 
-ParamList -> , TypeSpec id Fid_2 ParamList 
+ParamList -> , #push TypeSpec #push id Fid_2 ParamList 
               | .
 
-Fid_2 -> 
-        | [ ] .
+Fid_2 -> #add_param
+        | #add_param [ ] .
 
-CompoundStmt -> { DecList StmtList } .
+CompoundStmt -> { DecList StmtList } #end_scope .
 
 StmtList -> Stmt StmtList 
              | .
 
-Stmt -> CompoundStmt 
-       | if ( Expr ) Stmt else Stmt 
-       | while ( Expr ) Stmt 
-       | return Freturn 
-       | switch ( Expr ) { CaseStmts DefaultStmt }
-       | continue ;
-       | break ;
+Stmt -> #decl_normal_scope CompoundStmt 
+       | if ( Expr ) #save #decl_if_scope Stmt #end_scope_while #jpf_if #save else #decl_else_scope Stmt #end_scope_while #jp_if
+       | while #label ( Expr ) #decl_while_scope Stmt #while_ #end_scope_while
+       | return #return_type_check Freturn #return_assignment
+       | switch ( Expr ) { #decl_switch_scope CaseStmts DefaultStmt } #end_scope
+       | continue #continue_ ;
+       | break #break_ ;
        | Freturn .
 
 Freturn -> ; 
-          | Expr ; .
+          | Expr ; #pop .
 
-CaseStmts -> CaseStmt CaseStmts 
-              | .
+CaseStmts -> CaseStmt #jmp_case CaseStmts 
+              | #two_dummies .
 
-CaseStmt -> case num : StmtList .
+CaseStmt -> case #push num #eq_case #save : StmtList .
 
 DefaultStmt -> default : StmtList 
               | .
 
-Expr -> id Fid_5 
+Expr -> #push id Fid_5 
        | ( Expr ) Term_1 AddExpr_1 FAddExpr 
-       | num Term_1 AddExpr_1 FAddExpr 
+       | #push num Term_1 AddExpr_1 FAddExpr 
        | + Factor Term_1 AddExpr_1 FAddExpr 
-       | - Factor Term_1 AddExpr_1 FAddExpr .
+       | - Factor #negate Term_1 AddExpr_1 FAddExpr .
 
 Fid_5 -> Fid F]
-        | ( Args ) Term_1 AddExpr_1 FAddExpr .
+        | #push ( Args ) #func_call Term_1 AddExpr_1 FAddExpr .
 
-F] -> = Expr
+F] -> = Expr #assign
      | Term_1 AddExpr_1 FAddExpr .
 
 Fid -> 
-      | [ Expr ] .
+      | [ Expr ] #resolve_array_index .
 
-FAddExpr -> Relop Term AddExpr_1 
+FAddExpr -> #push Relop Term AddExpr_1 #relop
            | .
 
 Relop -> < 
         | == .
 
-AddExpr_1 -> + Term AddExpr_1 
-            | - Term AddExpr_1
+AddExpr_1 -> + Term #add AddExpr_1 
+            | - Term #sub AddExpr_1
             | .
 
 Term -> SignedFactor Term_1 .
 
-Term_1 -> * SignedFactor Term_1 
+Term_1 -> * SignedFactor #mult Term_1 
          | .
 
 SignedFactor -> Factor 
                | + Factor 
-               | - Factor .
+               | - Factor #negate .
 
 Factor -> ( Expr ) 
-         | id Fid_3 
-         | num .
+         | #push id Fid_3 
+         | #push num .
 
 Fid_3 -> Fid 
-        | ( Args ) .
+        | #func_call ( Args ) .
 
-Args -> Expr ArgList_1 
+Args -> Expr #assign_func ArgList_1 
        | .
 
-ArgList_1 -> , Expr ArgList_1 
+ArgList_1 -> , Expr #assign_func ArgList_1 
             | .
